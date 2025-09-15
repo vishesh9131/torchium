@@ -312,7 +312,7 @@ class OptimizerBenchmark:
         tasks = self.create_tasks()
         results = defaultdict(list)
         
-        print("🚀 Starting Comprehensive Optimizer Benchmark")
+        print(" Starting Comprehensive Optimizer Benchmark")
         print(f"📊 Testing {len(optimizers_config)} optimizers on {len(tasks)} tasks")
         print("=" * 60)
         
@@ -335,7 +335,7 @@ class OptimizerBenchmark:
                 
                 if result is not None:
                     results[task_name].append(result)
-                    print(f"   ✅ Improvement: {result.improvement_ratio:.2%}, "
+                    print(f"    Improvement: {result.improvement_ratio:.2%}, "
                           f"Time: {result.total_time:.2f}s")
                 else:
                     print(f"   ❌ Failed")
@@ -420,7 +420,7 @@ class OptimizerBenchmark:
             report.append(f"\n🏆 OVERALL WINNER: {best_result.optimizer_name.upper()}")
             report.append(f"   📈 Average improvement: {best_result.improvement_ratio:.1%}")
             report.append(f"   ⚡ Average convergence: {best_result.convergence_steps} steps")
-            report.append(f"   ⏱️  Average time: {best_result.total_time:.2f}s")
+            report.append(f"    Average time: {best_result.total_time:.2f}s")
         
         return "\n".join(report)
     

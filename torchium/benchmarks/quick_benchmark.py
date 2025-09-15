@@ -25,7 +25,7 @@ class QuickBenchmark:
         if optimizers is None:
             optimizers = ['adam', 'adamw', 'sgd', 'ranger', 'lion']
         
-        print("🚀 Quick Regression Benchmark")
+        print(" Quick Regression Benchmark")
         print("=" * 40)
         
         results = []
@@ -86,7 +86,7 @@ class QuickBenchmark:
                     'time': training_time
                 })
                 
-                print(f"✅ {optimizer_name:10s}: {improvement:6.1f}% improvement in {training_time:.2f}s")
+                print(f" {optimizer_name:10s}: {improvement:6.1f}% improvement in {training_time:.2f}s")
                 
             except Exception as e:
                 print(f"❌ {optimizer_name:10s}: Failed ({str(e)[:30]}...)")
@@ -168,7 +168,7 @@ class QuickBenchmark:
                     'time': training_time
                 })
                 
-                print(f"✅ {optimizer_name:10s}: {final_acc:5.1f}% accuracy (+{acc_improvement:4.1f}%) in {training_time:.2f}s")
+                print(f" {optimizer_name:10s}: {final_acc:5.1f}% accuracy (+{acc_improvement:4.1f}%) in {training_time:.2f}s")
                 
             except Exception as e:
                 print(f"❌ {optimizer_name:10s}: Failed ({str(e)[:30]}...)")

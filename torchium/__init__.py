@@ -110,7 +110,7 @@ def get_info():
 def print_info():
     """Print library information."""
     info = get_info()
-    print(f"🚀 {info['name']} v{info['version']}")
+    print(f" {info['name']} v{info['version']}")
     print(f"📧 {info['email']}")
     print(f"📄 License: {info['license']}")
     print(f"🔧 Optimizers: {info['optimizers_count']}")
