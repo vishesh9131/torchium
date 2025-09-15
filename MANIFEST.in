@@ -1,0 +1,25 @@
+include README.md
+include LICENSE
+include requirements.txt
+include setup.py
+include CHANGELOG.md
+include CONTRIBUTING.md
+include CODE_OF_CONDUCT.md
+include SECURITY.md
+recursive-include torchium *.py
+recursive-include torchium *.pyi
+recursive-include assets *.png
+recursive-include assets *.jpg
+recursive-include assets *.jpeg
+recursive-include assets *.gif
+recursive-include assets *.svg
+recursive-include recipies *.md
+recursive-include torchium/docs *.rst
+recursive-include torchium/docs *.md
+recursive-include torchium/tests *.py
+recursive-include torchium/benchmarks *.py
+global-exclude *.pyc
+global-exclude __pycache__
+global-exclude .git*
+global-exclude .DS_Store
+global-exclude *.egg-info
