@@ -119,7 +119,7 @@ class TimeSeriesLoss(nn.Module):
                 self.seasonal_weight * seasonal_loss)
 
 # NLP Losses
-class PexfrplexityLoss(nn.Module):
+class PerplexityLoss(nn.Module):
     """Perplexity-based loss for language modeling"""
     def __init__(self, ignore_index: int = -100):
         super().__init__()
@@ -245,6 +245,7 @@ class BLEULoss(nn.Module):
         return torch.tensor(1.0 - avg_bleu, device=pred_tokens.device, requires_grad=True)
 
 # Additional placeholder implementations for completeness
+
 ROUGELoss = PerplexityLoss  # placeholder - would need proper ROUGE implementation
 METEORLoss = PerplexityLoss  # placeholder - would need proper METEOR implementation
 BERTScoreLoss = PerplexityLoss  # placeholder - would need BERT model for scoring

@@ -234,3 +234,4 @@ datasets/
 # Local configuration
 config.local.py
 .env.local
+/test_scripts
