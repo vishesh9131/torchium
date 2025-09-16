@@ -57,13 +57,19 @@
 }
 
 .wy-menu-vertical li.current a {
-    color: #333333 !important;
+    color: #ffffff !important;
     font-weight: bold !important;
 }
 
 .wy-menu-vertical a {
-    color: #333333 !important;
+    color: #e6e9ef !important; /* light text for dark sidebar */
     padding: 0.6em 1em !important;
+}
+
+/* Improve hover/active contrast on dark sidebar */
+.wy-menu-vertical a:hover {
+    background-color: #3a3f44 !important;
+    color: #ffffff !important;
 }
 
 /* Ensure theme CSS loads properly */
