@@ -36,6 +36,13 @@ html_static_path = ['_static']
 html_logo = None
 html_favicon = None
 
+# Fix for GitHub Pages - ensure proper base URL
+html_baseurl = 'https://vishesh9131.github.io/torchium/'
+
+# Add custom CSS to fix styling issues
+def setup(app):
+    app.add_css_file('custom.css')
+
 # -- Extension configuration -------------------------------------------------
 
 # Napoleon settings

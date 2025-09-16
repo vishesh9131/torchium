@@ -5,7 +5,7 @@ Margin-based loss functions.
 import torch
 import torch.nn as nn
 from ...utils.registry import register_loss
-
+from torch.nn import functional as F
 @register_loss("tripletloss")
 class TripletLoss(nn.TripletMarginLoss):
     """Enhanced TripletLoss."""
