@@ -303,6 +303,15 @@ blockquote {
     .bd-main .bd-content {
         padding: 1rem;
     }
+    /* Remove desktop left margin and shrink padding on mobile */
+    .wy-nav-content {
+        margin-left: 0 !important;
+        padding: 0 1rem !important;
+    }
+    /* Collapse sidebar width overrides we set for desktop */
+    .wy-nav-side {
+        width: 0 !important;
+    }
     
     h1 {
         font-size: 2rem;
