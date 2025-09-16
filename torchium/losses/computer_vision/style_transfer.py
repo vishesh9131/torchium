@@ -1,8 +1,15 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torchvision.models as models
 from typing import Optional, List
+
+# Optional torchvision import with fallback
+try:
+    import torchvision.models as models
+    TORCHVISION_AVAILABLE = True
+except ImportError:
+    TORCHVISION_AVAILABLE = False
+    models = None
 
 def gram_matrix(features: torch.Tensor) -> torch.Tensor:
     """Compute Gram matrix for style representation"""
@@ -22,6 +29,9 @@ class StyleLoss(nn.Module):
         
         self.style_layers = style_layers
         self.style_weights = style_weights
+        
+        if not TORCHVISION_AVAILABLE:
+            raise ImportError("torchvision is required for StyleLoss. Install with: pip install torchvision")
         
         # load pre-trained VGG19
         vgg = models.vgg19(pretrained=True).features
@@ -85,6 +95,9 @@ class ContentLoss(nn.Module):
         
         self.content_layers = content_layers
         self.content_weights = content_weights
+        
+        if not TORCHVISION_AVAILABLE:
+            raise ImportError("torchvision is required for ContentLoss. Install with: pip install torchvision")
         
         # load pre-trained VGG19
         vgg = models.vgg19(pretrained=True).features
@@ -181,6 +194,9 @@ class AdaINLoss(nn.Module):
         super().__init__()
         self.content_weight = content_weight
         self.style_weight = style_weight
+        
+        if not TORCHVISION_AVAILABLE:
+            raise ImportError("torchvision is required for AdaINLoss. Install with: pip install torchvision")
         
         # pre-trained VGG for feature extraction
         vgg = models.vgg19(pretrained=True).features

@@ -1,9 +1,16 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torchvision.models as models
 from typing import Optional, List
 import math
+
+# Optional torchvision import with fallback
+try:
+    import torchvision.models as models
+    TORCHVISION_AVAILABLE = True
+except ImportError:
+    TORCHVISION_AVAILABLE = False
+    models = None
 
 # Placeholder implementations
 class FocalDetectionLoss(nn.Module):
@@ -30,6 +37,9 @@ class PerceptualLoss(nn.Module):
         super().__init__()
         if feature_layers is None:
             feature_layers = [3, 8, 15, 22]  # conv1_2, conv2_2, conv3_3, conv4_3
+        
+        if not TORCHVISION_AVAILABLE:
+            raise ImportError("torchvision is required for PerceptualLoss. Install with: pip install torchvision")
         
         self.feature_layers = feature_layers
         vgg = models.vgg16(pretrained=True).features
@@ -226,6 +236,9 @@ class VGGLoss(nn.Module):
         
         self.layers = layers
         self.weights = weights
+        
+        if not TORCHVISION_AVAILABLE:
+            raise ImportError("torchvision is required for VGGLoss. Install with: pip install torchvision")
         
         vgg = models.vgg19(pretrained=True).features
         
