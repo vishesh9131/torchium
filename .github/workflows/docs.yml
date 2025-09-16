@@ -3,8 +3,6 @@ name: Deploy Documentation
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 # Allow GitHub Actions to write to repository and deploy to Pages
 permissions:
@@ -12,18 +10,10 @@ permissions:
   pages: write
   id-token: write
 
-# Ensure only one deployment runs at a time
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
     - uses: actions/checkout@v4
@@ -46,13 +36,9 @@ jobs:
         cd torchium/docs
         sphinx-build -b html source build/html
     
-    - name: Upload Pages artifact
-      if: github.ref == 'refs/heads/main'
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: ./torchium/docs/build/html
-        
     - name: Deploy to GitHub Pages
-      if: github.ref == 'refs/heads/main'
-      id: deployment
-      uses: actions/deploy-pages@v4
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./torchium/docs/build/html
+        force_orphan: true
