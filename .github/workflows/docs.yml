@@ -6,9 +6,9 @@ on:
   pull_request:
     branches: [ main ]
 
-# Allow GitHub Actions to create and approve pull requests
+# Allow GitHub Actions to write to repository and deploy to Pages
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -21,6 +21,9 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
     - uses: actions/checkout@v4
@@ -43,10 +46,13 @@ jobs:
         cd torchium/docs
         sphinx-build -b html source build/html
     
+    - name: Upload Pages artifact
+      if: github.ref == 'refs/heads/main'
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ./torchium/docs/build/html
+        
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./torchium/docs/build/html
-        # Remove cname for now - can be added later if needed
+      id: deployment
+      uses: actions/deploy-pages@v4
