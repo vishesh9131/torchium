@@ -32,8 +32,8 @@ exclude_patterns = []
 
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
-html_logo = None
-html_favicon = None
+html_logo = '_static/logo.png'
+html_favicon = '_static/logo.png'
 
 # Fix for GitHub Pages - ensure proper base URL
 html_baseurl = 'https://vishesh9131.github.io/torchium/'
@@ -88,6 +88,11 @@ html_theme_options = {
     'style_external_links': False,
     'vcs_pageview_mode': '',
     'style_nav_header_background': '#2980B9',
+    # Logo options
+    'logo': {
+        'image_light': '_static/logo.png',
+        'image_dark': '_static/logo.png',
+    },
     # Toc options
     'collapse_navigation': True,
     'sticky_navigation': True,
