@@ -312,6 +312,16 @@ blockquote {
     .wy-nav-side {
         width: 0 !important;
     }
+    /* Prevent off-canvas shift gap when menu is closed */
+    .wy-nav-content-wrap,
+    .wy-nav-content-wrap.shift {
+        margin-left: 0 !important;
+        transform: none !important;
+        -webkit-transform: none !important;
+    }
+    .wy-grid-for-nav {
+        margin-left: 0 !important;
+    }
     
     h1 {
         font-size: 2rem;
@@ -380,4 +390,25 @@ blockquote {
     height: auto;
     border-radius: 0.25rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* --- Mobile nav: restore hamburger slide while keeping compact layout --- */
+@media (max-width: 768px) {
+    html, body { overflow-x: hidden; }
+    /* Sidebar defaults to off-canvas */
+    .wy-nav-side {
+        width: 270px !important;
+        left: -270px !important;
+        transition: left 0.2s ease-in-out;
+    }
+    /* When menu is opened, RTD adds `.shift` */
+    .wy-nav-side.shift {
+        left: 0 !important;
+    }
+    /* Content should not have desktop margin, but should slide when menu opens */
+    .wy-nav-content-wrap { margin-left: 0 !important; }
+    .wy-nav-content-wrap.shift {
+        transform: translateX(270px) !important;
+        -webkit-transform: translateX(270px) !important;
+    }
 }
