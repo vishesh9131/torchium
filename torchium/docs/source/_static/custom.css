@@ -1,7 +1,21 @@
 /* Custom CSS for Torchium Documentation */
 
-/* Fix for GitHub Pages - ensure proper font loading */
-@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&display=swap');
+/* Force proper theme loading without external imports */
+
+/* GitHub Pages specific fixes - ensure fonts load properly */
+@font-face {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Lato Regular'), local('Lato-Regular'), url(https://fonts.gstatic.com/s/lato/v17/S6uNw4cLYzk4FCQXK8dKI6eCvFv-.woff2) format('woff2');
+}
+
+@font-face {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 700;
+    src: local('Lato Bold'), local('Lato-Bold'), url(https://fonts.gstatic.com/s/lato/v17/S6u9w4cLYzk4FCQXK8dKI6eCvFv-.woff2) format('woff2');
+}
 
 /* Override default theme colors for better branding */
 :root {
@@ -20,10 +34,101 @@
     --pst-color-link-hover: #1F5F8B;
 }
 
+/* GitHub Pages CSS fixes - ensure proper theme appearance */
+.wy-nav-top {
+    background-color: #2980B9 !important;
+    color: white !important;
+}
+
+.wy-side-nav-search {
+    background-color: #2980B9 !important;
+    border-bottom: 1px solid #1F5F8B !important;
+}
+
+.wy-side-nav-search input[type="text"] {
+    background-color: #ffffff !important;
+    border: 1px solid #cccccc !important;
+    border-radius: 3px !important;
+    color: #333333 !important;
+}
+
+.wy-menu-vertical li.current {
+    background-color: #e6e6e6 !important;
+}
+
+.wy-menu-vertical li.current a {
+    color: #333333 !important;
+    font-weight: bold !important;
+}
+
+.wy-menu-vertical a {
+    color: #333333 !important;
+    padding: 0.6em 1em !important;
+}
+
+/* Ensure theme CSS loads properly */
+html {
+    font-size: 16px;
+}
+
 /* Improve overall typography */
 body {
     font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     line-height: 1.6;
+    color: var(--pst-color-text-base);
+    background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+}
+
+/* Force RTD theme to load - Enhanced for GitHub Pages */
+.wy-nav-side {
+    background-color: #343131 !important;
+    color: #cccccc !important;
+    width: 300px !important;
+}
+
+.wy-nav-content {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    margin-left: 300px !important;
+}
+
+.wy-nav-content-wrap {
+    background-color: #ffffff !important;
+}
+
+/* Main content styling */
+.rst-content {
+    max-width: none !important;
+    color: #333333 !important;
+    line-height: 1.6 !important;
+    font-size: 16px !important;
+}
+
+.rst-content h1, 
+.rst-content h2, 
+.rst-content h3, 
+.rst-content h4, 
+.rst-content h5, 
+.rst-content h6 {
+    color: #2980B9 !important;
+    font-weight: 600 !important;
+}
+
+/* Code blocks styling */
+.rst-content pre {
+    background-color: #f8f9fa !important;
+    border: 1px solid #e9ecef !important;
+    border-radius: 4px !important;
+    padding: 1rem !important;
+}
+
+.rst-content code {
+    background-color: #f8f9fa !important;
+    color: #e83e8c !important;
+    padding: 0.2rem 0.4rem !important;
+    border-radius: 3px !important;
 }
 
 /* Style the main content area */

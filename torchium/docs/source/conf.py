@@ -23,7 +23,6 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinx.ext.mathjax',
-    'sphinx_rtd_theme',
 ]
 
 templates_path = ['_templates']
@@ -38,6 +37,11 @@ html_favicon = None
 
 # Fix for GitHub Pages - ensure proper base URL
 html_baseurl = 'https://vishesh9131.github.io/torchium/'
+
+# Ensure CSS files are properly copied
+html_css_files = [
+    'custom.css',
+]
 
 # Add custom CSS to fix styling issues
 def setup(app):
