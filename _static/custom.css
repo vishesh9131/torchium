@@ -1,0 +1,431 @@
+/* Custom CSS for Torchium Documentation */
+
+/* Force proper theme loading without external imports */
+
+/* GitHub Pages specific fixes - ensure fonts load properly */
+@font-face {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Lato Regular'), local('Lato-Regular'), url(https://fonts.gstatic.com/s/lato/v17/S6uNw4cLYzk4FCQXK8dKI6eCvFv-.woff2) format('woff2');
+}
+
+@font-face {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 700;
+    src: local('Lato Bold'), local('Lato-Bold'), url(https://fonts.gstatic.com/s/lato/v17/S6u9w4cLYzk4FCQXK8dKI6eCvFv-.woff2) format('woff2');
+}
+
+/* Override default theme colors for better branding */
+:root {
+    --pst-color-primary: #2980B9;
+    --pst-color-secondary: #E74C3C;
+    --pst-color-accent: #F39C12;
+    --pst-color-background: #FFFFFF;
+    --pst-color-on-background: #000000;
+    --pst-color-surface: #F8F9FA;
+    --pst-color-on-surface: #000000;
+    --pst-color-text-base: #000000;
+    --pst-color-text-muted: #6C757D;
+    --pst-color-border: #DEE2E6;
+    --pst-color-inline-code: #E83E8C;
+    --pst-color-link: #2980B9;
+    --pst-color-link-hover: #1F5F8B;
+}
+
+/* GitHub Pages CSS fixes - ensure proper theme appearance */
+.wy-nav-top {
+    background-color: #2980B9 !important;
+    color: white !important;
+}
+
+.wy-side-nav-search {
+    background-color: #2980B9 !important;
+    border-bottom: 1px solid #1F5F8B !important;
+}
+
+.wy-side-nav-search input[type="text"] {
+    background-color: #ffffff !important;
+    border: 1px solid #cccccc !important;
+    border-radius: 3px !important;
+    color: #333333 !important;
+}
+
+.wy-menu-vertical li.current {
+    background-color: #e6e6e6 !important;
+}
+
+.wy-menu-vertical li.current a {
+    color: #ffffff !important;
+    font-weight: bold !important;
+}
+
+.wy-menu-vertical a {
+    color: #e6e9ef !important; /* light text for dark sidebar */
+    padding: 0.6em 1em !important;
+}
+
+/* Improve hover/active contrast on dark sidebar */
+.wy-menu-vertical a:hover {
+    background-color: #3a3f44 !important;
+    color: #ffffff !important;
+}
+
+/* Submenu area uses light background – switch to dark text for readability */
+.wy-menu-vertical li.current > ul a,
+.wy-menu-vertical li.current ul li a {
+    color: #2c3e50 !important;
+}
+.wy-menu-vertical li.current > ul a:hover,
+.wy-menu-vertical li.current ul li a:hover {
+    background-color: #e6e9ed !important;
+    color: #000000 !important;
+}
+
+/* Ensure theme CSS loads properly */
+html {
+    font-size: 16px;
+}
+
+/* Improve overall typography */
+body {
+    font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: var(--pst-color-text-base);
+    background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+}
+
+/* Force RTD theme to load - Enhanced for GitHub Pages */
+.wy-nav-side {
+    background-color: #343131 !important;
+    color: #cccccc !important;
+    width: 300px !important;
+}
+
+.wy-nav-content {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    margin-left: 300px !important;
+}
+
+.wy-nav-content-wrap {
+    background-color: #ffffff !important;
+}
+
+/* Main content styling */
+.rst-content {
+    max-width: none !important;
+    color: #333333 !important;
+    line-height: 1.6 !important;
+    font-size: 16px !important;
+}
+
+.rst-content h1, 
+.rst-content h2, 
+.rst-content h3, 
+.rst-content h4, 
+.rst-content h5, 
+.rst-content h6 {
+    color: #2980B9 !important;
+    font-weight: 600 !important;
+}
+
+/* Code blocks styling */
+.rst-content pre {
+    background-color: #f8f9fa !important;
+    border: 1px solid #e9ecef !important;
+    border-radius: 4px !important;
+    padding: 1rem !important;
+}
+
+.rst-content code {
+    background-color: #f8f9fa !important;
+    color: #e83e8c !important;
+    padding: 0.2rem 0.4rem !important;
+    border-radius: 3px !important;
+}
+
+/* Style the main content area */
+.bd-main .bd-content {
+    max-width: none;
+    padding: 2rem;
+}
+
+/* Improve heading styles */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--pst-color-primary);
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+h1 {
+    font-size: 2.5rem;
+    border-bottom: 3px solid var(--pst-color-primary);
+    padding-bottom: 0.5rem;
+}
+
+h2 {
+    font-size: 2rem;
+    border-bottom: 2px solid var(--pst-color-border);
+    padding-bottom: 0.3rem;
+}
+
+/* Style code blocks */
+pre, code {
+    font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+    background-color: #F8F9FA;
+    border: 1px solid var(--pst-color-border);
+    border-radius: 4px;
+}
+
+pre {
+    padding: 1rem;
+    overflow-x: auto;
+    background-color: #F8F9FA;
+}
+
+code {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.9em;
+}
+
+/* Style badges */
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    margin: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25rem;
+}
+
+.badge-version {
+    background-color: #28A745;
+    color: white;
+}
+
+.badge-license {
+    background-color: #FFC107;
+    color: #000;
+}
+
+.badge-python {
+    background-color: #007BFF;
+    color: white;
+}
+
+/* Improve sidebar styling */
+.bd-sidebar {
+    background-color: var(--pst-color-surface);
+    border-right: 1px solid var(--pst-color-border);
+}
+
+.bd-sidebar .nav-link {
+    color: var(--pst-color-text-base);
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    margin: 0.1rem 0;
+}
+
+.bd-sidebar .nav-link:hover {
+    background-color: var(--pst-color-primary);
+    color: white;
+}
+
+.bd-sidebar .nav-link.active {
+    background-color: var(--pst-color-primary);
+    color: white;
+    font-weight: 700;
+}
+
+/* Style the search box */
+.bd-search {
+    margin-bottom: 1rem;
+}
+
+.bd-search input {
+    border: 1px solid var(--pst-color-border);
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    width: 100%;
+}
+
+/* Improve table styling */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+}
+
+th, td {
+    border: 1px solid var(--pst-color-border);
+    padding: 0.75rem;
+    text-align: left;
+}
+
+th {
+    background-color: var(--pst-color-surface);
+    font-weight: 700;
+    color: var(--pst-color-primary);
+}
+
+/* Style blockquotes */
+blockquote {
+    border-left: 4px solid var(--pst-color-primary);
+    padding-left: 1rem;
+    margin: 1rem 0;
+    background-color: var(--pst-color-surface);
+    padding: 1rem;
+    border-radius: 0.25rem;
+}
+
+/* Improve button styling */
+.btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    margin: 0.25rem;
+    background-color: var(--pst-color-primary);
+    color: white;
+    text-decoration: none;
+    border-radius: 0.25rem;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn:hover {
+    background-color: var(--pst-color-link-hover);
+    color: white;
+    text-decoration: none;
+}
+
+/* Style the footer */
+.bd-footer {
+    background-color: var(--pst-color-surface);
+    border-top: 1px solid var(--pst-color-border);
+    padding: 2rem 0;
+    margin-top: 3rem;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .bd-main .bd-content {
+        padding: 1rem;
+    }
+    /* Remove desktop left margin and shrink padding on mobile */
+    .wy-nav-content {
+        margin-left: 0 !important;
+        padding: 0 1rem !important;
+    }
+    /* Collapse sidebar width overrides we set for desktop */
+    .wy-nav-side {
+        width: 0 !important;
+    }
+    /* Prevent off-canvas shift gap when menu is closed */
+    .wy-nav-content-wrap,
+    .wy-nav-content-wrap.shift {
+        margin-left: 0 !important;
+        transform: none !important;
+        -webkit-transform: none !important;
+    }
+    .wy-grid-for-nav {
+        margin-left: 0 !important;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Fix for GitHub Pages specific issues */
+.rst-content {
+    max-width: none;
+}
+
+.rst-content .section {
+    margin-bottom: 2rem;
+}
+
+/* Improve list styling */
+.rst-content ul, .rst-content ol {
+    margin-left: 2rem;
+    margin-bottom: 1rem;
+}
+
+.rst-content li {
+    margin-bottom: 0.5rem;
+}
+
+/* Style the table of contents */
+.rst-content .toctree-wrapper {
+    background-color: var(--pst-color-surface);
+    border: 1px solid var(--pst-color-border);
+    border-radius: 0.25rem;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+/* Improve admonition boxes */
+.admonition {
+    border: 1px solid var(--pst-color-border);
+    border-radius: 0.25rem;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.admonition-title {
+    font-weight: 700;
+    color: var(--pst-color-primary);
+    margin-bottom: 0.5rem;
+}
+
+/* Style the version info */
+.version-info {
+    background-color: var(--pst-color-surface);
+    border: 1px solid var(--pst-color-border);
+    border-radius: 0.25rem;
+    padding: 1rem;
+    margin: 1rem 0;
+    text-align: center;
+}
+
+/* Fix for potential CSS loading issues */
+.bd-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* --- Mobile nav: restore hamburger slide while keeping compact layout --- */
+@media (max-width: 768px) {
+    html, body { overflow-x: hidden; }
+    /* Sidebar defaults to off-canvas */
+    .wy-nav-side {
+        width: 270px !important;
+        left: -270px !important;
+        transition: left 0.2s ease-in-out;
+    }
+    /* When menu is opened, RTD adds `.shift` */
+    .wy-nav-side.shift {
+        left: 0 !important;
+    }
+    /* Content should not have desktop margin, but should slide when menu opens */
+    .wy-nav-content-wrap { margin-left: 0 !important; }
+    .wy-nav-content-wrap.shift {
+        transform: translateX(270px) !important;
+        -webkit-transform: translateX(270px) !important;
+    }
+}
