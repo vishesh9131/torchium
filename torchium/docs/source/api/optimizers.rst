@@ -195,11 +195,6 @@ Adam Variants
    :undoc-members:
    :show-inheritance:
 
-.. autoclass:: AdaHessian
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 .. autoclass:: AdamP
    :members:
    :undoc-members:
