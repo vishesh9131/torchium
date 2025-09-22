@@ -9,7 +9,7 @@ from .compatibility import check_pytorch_version, get_pytorch_version
 
 __all__ = [
     "OptimizerRegistry",
-    "LossRegistry", 
+    "LossRegistry",
     "get_available_optimizers",
     "get_available_losses",
     "create_optimizer",

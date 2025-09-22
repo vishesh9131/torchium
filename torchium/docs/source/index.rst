@@ -81,6 +81,8 @@ Documentation Contents
    tutorials/advanced_usage
    tutorials/domain_specific_usage
    tutorials/performance_guide
+   tutorials/cuda_integration
+   tutorials/cython_optimizations
    tutorials/custom_components
 
 .. toctree::

@@ -10,13 +10,26 @@ from .general import Lion, MADGRAD, Apollo, A2Grad, AccSGD, ASGD, SGDW
 
 __all__ = [
     # Computer Vision
-    "Ranger", "Ranger21", "Ranger25", "AdamP",
+    "Ranger",
+    "Ranger21",
+    "Ranger25",
+    "AdamP",
     # NLP
-    "LAMB", "NovoGrad", "AdaFactor", 
+    "LAMB",
+    "NovoGrad",
+    "AdaFactor",
     # Sparse
-    "SparseAdam", "SM3", "FTRL",
+    "SparseAdam",
+    "SM3",
+    "FTRL",
     # Distributed
     "LARS",
     # General
-    "Lion", "MADGRAD", "Apollo", "A2Grad", "AccSGD", "ASGD", "SGDW",
+    "Lion",
+    "MADGRAD",
+    "Apollo",
+    "A2Grad",
+    "AccSGD",
+    "ASGD",
+    "SGDW",
 ]

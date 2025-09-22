@@ -8,19 +8,15 @@ from typing import Union, Dict, Any, List, Optional
 from .registry import optimizer_registry, loss_registry
 
 
-def create_optimizer(
-    name: str,
-    params: Union[List[torch.Tensor], Dict[str, Any]],
-    **kwargs
-) -> torch.optim.Optimizer:
+def create_optimizer(name: str, params: Union[List[torch.Tensor], Dict[str, Any]], **kwargs) -> torch.optim.Optimizer:
     """
     Create an optimizer by name.
-    
+
     Args:
         name: Name of the optimizer
         params: Model parameters or parameter groups
         **kwargs: Additional optimizer arguments
-        
+
     Returns:
         Optimizer instance
     """
@@ -31,17 +27,14 @@ def create_optimizer(
         raise ValueError(f"Failed to create optimizer '{name}': {str(e)}")
 
 
-def create_loss(
-    name: str,
-    **kwargs
-) -> nn.Module:
+def create_loss(name: str, **kwargs) -> nn.Module:
     """
     Create a loss function by name.
-    
+
     Args:
         name: Name of the loss function
         **kwargs: Additional loss function arguments
-        
+
     Returns:
         Loss function instance
     """
@@ -53,22 +46,18 @@ def create_loss(
 
 
 def create_optimizer_from_model(
-    model: nn.Module,
-    optimizer_name: str,
-    lr: float = 0.001,
-    weight_decay: float = 0.0,
-    **kwargs
+    model: nn.Module, optimizer_name: str, lr: float = 0.001, weight_decay: float = 0.0, **kwargs
 ) -> torch.optim.Optimizer:
     """
     Create an optimizer for a model.
-    
+
     Args:
         model: PyTorch model
         optimizer_name: Name of the optimizer
         lr: Learning rate
         weight_decay: Weight decay
         **kwargs: Additional optimizer arguments
-        
+
     Returns:
         Optimizer instance
     """
@@ -82,11 +71,11 @@ def create_optimizer_with_groups(
     lr: float = 0.001,
     weight_decay: float = 0.0,
     no_decay: Optional[List[str]] = None,
-    **kwargs
+    **kwargs,
 ) -> torch.optim.Optimizer:
     """
     Create an optimizer with different parameter groups.
-    
+
     Args:
         model: PyTorch model
         optimizer_name: Name of the optimizer
@@ -94,24 +83,22 @@ def create_optimizer_with_groups(
         weight_decay: Weight decay
         no_decay: List of parameter names to exclude from weight decay
         **kwargs: Additional optimizer arguments
-        
+
     Returns:
         Optimizer instance
     """
     if no_decay is None:
-        no_decay = ['bias', 'LayerNorm.weight', 'LayerNorm.bias']
-    
+        no_decay = ["bias", "LayerNorm.weight", "LayerNorm.bias"]
+
     param_groups = [
         {
-            'params': [p for n, p in model.named_parameters() 
-                      if not any(nd in n for nd in no_decay)],
-            'weight_decay': weight_decay,
+            "params": [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
+            "weight_decay": weight_decay,
         },
         {
-            'params': [p for n, p in model.named_parameters() 
-                      if any(nd in n for nd in no_decay)],
-            'weight_decay': 0.0,
-        }
+            "params": [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)],
+            "weight_decay": 0.0,
+        },
     ]
-    
+
     return create_optimizer(optimizer_name, param_groups, lr=lr, **kwargs)

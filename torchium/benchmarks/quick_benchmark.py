@@ -57,11 +57,28 @@ class QuickBenchmark:
                 optimizer = torchium.create_optimizer(optimizer_name, model.parameters(), lr=lr)
                 criterion = nn.MSELoss()
                 
+                # WARMUP: Account for first-call overhead (JIT compilation, memory allocation, etc.)
+                warmup_epochs = 2
+                for _ in range(warmup_epochs):
+                    optimizer.zero_grad()
+                    output = model(x)
+                    loss = criterion(output, y)
+                    loss.backward()
+                    optimizer.step()
+                
+                # Reset model weights after warmup for fair comparison
+                torch.manual_seed(42)
+                for layer in model:
+                    if hasattr(layer, 'weight'):
+                        torch.nn.init.xavier_uniform_(layer.weight)
+                        if hasattr(layer, 'bias') and layer.bias is not None:
+                            torch.nn.init.zeros_(layer.bias)
+                
                 # Initial loss
                 with torch.no_grad():
                     initial_loss = criterion(model(x), y).item()
                 
-                # Training
+                # Training - NOW measure actual performance
                 start_time = time.time()
                 for epoch in range(epochs):
                     optimizer.zero_grad()

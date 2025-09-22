@@ -235,3 +235,5 @@ datasets/
 config.local.py
 .env.local
 /test_scripts
+CYTHON_README.md
+VERIFICATION_GUIDE.md

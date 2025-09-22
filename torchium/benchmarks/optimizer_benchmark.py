@@ -221,11 +221,24 @@ class OptimizerBenchmark:
                 print(f"Failed to create optimizer {optimizer_name}: {e}")
                 return None
             
-            # Benchmark training
+            x, y = data_gen()
+            
+            # WARMUP: Run a few iterations to account for first-call overhead
+            # This includes JIT compilation, memory allocation, etc.
+            warmup_epochs = 3
+            for _ in range(warmup_epochs):
+                optimizer.zero_grad()
+                output = model(x)
+                loss = criterion(output, y)
+                loss.backward()
+                optimizer.step()
+            
+            # Reset model weights after warmup to ensure fair comparison
+            model.apply(self._init_weights)
+            
+            # Benchmark training - NOW measure actual performance
             start_time = time.time()
             initial_memory = self._get_memory_usage()
-            
-            x, y = data_gen()
             
             # Initial loss
             with torch.no_grad():
