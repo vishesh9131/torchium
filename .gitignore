@@ -237,3 +237,5 @@ config.local.py
 /test_scripts
 CYTHON_README.md
 VERIFICATION_GUIDE.md
+upload.txt
+.pypirc

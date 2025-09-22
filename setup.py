@@ -17,7 +17,7 @@ def read_requirements():
 
 setup(
     name="torchium",
-    version="0.1.0",
+    version="0.1.2",
     author="Vishesh Yadav",
     author_email="sciencely98@gmail.com",
     description="Comprehensive PyTorch Extension Library with 200+ Optimizers and 200+ Loss Functions",

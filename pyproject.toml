@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "torchium"
-version = "0.1.1"
+version = "0.1.2"
 description = "Comprehensive PyTorch Extension Library with 200+ Optimizers and 200+ Loss Functions"
 readme = "README.md"
 license = {text = "MIT"}
