@@ -239,3 +239,6 @@ CYTHON_README.md
 VERIFICATION_GUIDE.md
 upload.txt
 .pypirc
+final_verification.py
+FIXES_SUMMARY.md
+test_all_components.py

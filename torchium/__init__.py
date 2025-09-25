@@ -24,7 +24,10 @@ from . import utils
 # Factory functions - these will be available once utils are imported
 try:
     from .utils.factory import create_optimizer, create_loss
-    from .utils.registry import get_available_optimizers, get_available_losses
+    from .utils.registry import get_available_optimizers, get_available_losses, register_all_torchium_components
+    
+    # Register all Torchium components after modules are loaded
+    register_all_torchium_components()
     
     # Version info
     __all__ = [
@@ -57,6 +60,17 @@ try:
     try:
         from .optimizers.specialized.computer_vision import Ranger
         __all__.append("Ranger")
+    except ImportError:
+        pass
+    
+    # Quick access to second-order optimizers
+    try:
+        from .optimizers.second_order.lbfgs import LBFGS
+        from .optimizers.second_order.shampoo import Shampoo
+        from .optimizers.second_order.adahessian import AdaHessian
+        from .optimizers.second_order.kfac import KFAC
+        from .optimizers.second_order.natural_gradient import NaturalGradient
+        __all__.extend(["LBFGS", "Shampoo", "AdaHessian", "KFAC", "NaturalGradient"])
     except ImportError:
         pass
     

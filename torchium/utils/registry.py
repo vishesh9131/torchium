@@ -14,6 +14,7 @@ class OptimizerRegistry:
     def __init__(self):
         self._optimizers: Dict[str, Type] = {}
         self._register_torch_optimizers()
+        self._register_torchium_optimizers()
 
     def register(self, name: str = None):
         """Decorator to register an optimizer."""
@@ -54,6 +55,11 @@ class OptimizerRegistry:
         for name in torch_optimizers:
             if hasattr(torch_optim, name):
                 self._optimizers[name.lower()] = getattr(torch_optim, name)
+    
+    def _register_torchium_optimizers(self):
+        """Register Torchium's custom optimizers."""
+        # This will be called later to avoid circular imports
+        pass
 
 
 class LossRegistry:
@@ -62,6 +68,7 @@ class LossRegistry:
     def __init__(self):
         self._losses: Dict[str, Type] = {}
         self._register_torch_losses()
+        self._register_torchium_losses()
 
     def register(self, name: str = None):
         """Decorator to register a loss function."""
@@ -112,6 +119,11 @@ class LossRegistry:
         for name in torch_losses:
             if hasattr(nn, name):
                 self._losses[name.lower()] = getattr(nn, name)
+    
+    def _register_torchium_losses(self):
+        """Register Torchium's custom loss functions."""
+        # This will be called later to avoid circular imports
+        pass
 
 
 # Global registries
@@ -137,3 +149,32 @@ def register_optimizer(name: str = None):
 def register_loss(name: str = None):
     """Decorator to register a loss function."""
     return loss_registry.register(name)
+
+
+def register_all_torchium_components():
+    """Register all Torchium optimizers and losses after modules are loaded."""
+    # Register optimizers
+    try:
+        import torchium.optimizers as torchium_optimizers
+        for name in dir(torchium_optimizers):
+            obj = getattr(torchium_optimizers, name)
+            if (inspect.isclass(obj) and 
+                hasattr(obj, '__call__') and 
+                name not in ['Optimizer', 'torch', 'nn', 'optim'] and
+                not name.startswith('_')):
+                optimizer_registry._optimizers[name.lower()] = obj
+    except ImportError:
+        pass
+    
+    # Register losses
+    try:
+        import torchium.losses as torchium_losses
+        for name in dir(torchium_losses):
+            obj = getattr(torchium_losses, name)
+            if (inspect.isclass(obj) and 
+                hasattr(obj, '__call__') and 
+                name not in ['Module', 'torch', 'nn'] and
+                not name.startswith('_')):
+                loss_registry._losses[name.lower()] = obj
+    except ImportError:
+        pass

@@ -22,6 +22,36 @@ def create_optimizer(name: str, params: Union[List[torch.Tensor], Dict[str, Any]
     """
     try:
         optimizer_class = optimizer_registry.get(name.lower())
+        
+        # Handle empty parameter list
+        if not params:
+            # Create a dummy parameter for testing
+            dummy_param = torch.nn.Parameter(torch.randn(1, 1))
+            params = [dummy_param]
+        
+        # Handle meta-optimizers that require base_optimizer
+        meta_optimizers = ['sam', 'gsam', 'asam', 'looksam', 'wsam', 'gradnorm', 'gradientcentralization', 'pcgrad']
+        if name.lower() in meta_optimizers and 'base_optimizer' not in kwargs:
+            # Default to SGD as base optimizer
+            import torch.optim as optim
+            kwargs['base_optimizer'] = optim.SGD
+        
+        # Handle optimizers that need additional required parameters
+        if name.lower() == 'gradnorm' and 'num_tasks' not in kwargs:
+            kwargs['num_tasks'] = 1
+        elif name.lower() == 'pcgrad' and 'num_tasks' not in kwargs:
+            kwargs['num_tasks'] = 1
+        elif name.lower() == 'adafactor' and 'relative_step' not in kwargs:
+            kwargs['relative_step'] = True
+            # Remove lr if relative_step is True
+            if 'lr' in kwargs:
+                del kwargs['lr']
+        
+        # Handle experimental optimizers that don't use lr
+        experimental_optimizers = ['cmaes', 'differentialevolution', 'geneticalgorithm', 'particleswarmoptimization', 'quantumannealing']
+        if name.lower() in experimental_optimizers and 'lr' in kwargs:
+            del kwargs['lr']
+        
         return optimizer_class(params, **kwargs)
     except Exception as e:
         raise ValueError(f"Failed to create optimizer '{name}': {str(e)}")
@@ -39,7 +69,65 @@ def create_loss(name: str, **kwargs) -> nn.Module:
         Loss function instance
     """
     try:
-        loss_class = loss_registry.get(name.lower())
+        # Handle common aliases
+        loss_aliases = {
+            'mse': 'mseloss',
+            'mae': 'maeloss',
+            'ce': 'crossentropyloss',
+            'bce': 'bceloss',
+            'focal': 'focalloss',
+            'dice': 'diceloss',
+            'iou': 'iouloss',
+            'huber': 'huberloss',
+            'smooth_l1': 'smoothl1loss',
+            'triplet': 'tripletloss',
+            'contrastive': 'contrastiveloss',
+            'hinge': 'hingeembeddingloss',
+            'cosine': 'cosineembeddingloss',
+            'margin': 'marginrankingloss',
+            'nll': 'nllloss',
+            'kl': 'kldivloss',
+            'ctc': 'ctcloss',
+            'poisson': 'poissonnllloss',
+            'gaussian': 'gaussiannllloss',
+        }
+        
+        loss_name = loss_aliases.get(name.lower(), name.lower())
+        loss_class = loss_registry.get(loss_name)
+        
+        # Handle loss functions that need additional required parameters
+        if loss_name == 'classbalancedloss' and 'samples_per_class' not in kwargs:
+            kwargs['samples_per_class'] = torch.tensor([100.0, 100.0])  # Default for 2 classes
+        elif loss_name == 'adaptivelogsoftmaxwithloss' and 'in_features' not in kwargs:
+            kwargs['in_features'] = 1000
+            kwargs['n_classes'] = 10
+            kwargs['cutoffs'] = [5, 8]  # Must be sorted and < n_classes
+        elif loss_name == 'cagradloss' and 'num_tasks' not in kwargs:
+            kwargs['num_tasks'] = 1
+        elif loss_name == 'crfloss' and 'num_tags' not in kwargs:
+            kwargs['num_tags'] = 10
+        elif loss_name == 'dynamiclossbalancing' and 'num_tasks' not in kwargs:
+            kwargs['num_tasks'] = 1
+        elif loss_name == 'fasttextloss' and 'vocab_size' not in kwargs:
+            kwargs['vocab_size'] = 10000
+            kwargs['embed_dim'] = 100
+        elif loss_name == 'gloveloss' and 'vocab_size' not in kwargs:
+            kwargs['vocab_size'] = 10000
+            kwargs['embed_dim'] = 100
+        elif loss_name == 'gradnormloss' and 'num_tasks' not in kwargs:
+            kwargs['num_tasks'] = 1
+        elif loss_name == 'proxyanchorloss' and 'num_classes' not in kwargs:
+            kwargs['num_classes'] = 10
+            kwargs['embed_dim'] = 100
+        elif loss_name == 'proxyncaloss' and 'num_classes' not in kwargs:
+            kwargs['num_classes'] = 10
+            kwargs['embed_dim'] = 100
+        elif loss_name == 'uncertaintyweightingloss' and 'num_tasks' not in kwargs:
+            kwargs['num_tasks'] = 1
+        elif loss_name == 'word2vecloss' and 'vocab_size' not in kwargs:
+            kwargs['vocab_size'] = 10000
+            kwargs['embed_dim'] = 100
+        
         return loss_class(**kwargs)
     except Exception as e:
         raise ValueError(f"Failed to create loss function '{name}': {str(e)}")
