@@ -1,0 +1,602 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>torch.optim.rprop &mdash; Torchium 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=14fc6294" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=14fc6294" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/logo.png"/>
+    <link rel="canonical" href="https://vishesh9131.github.io/torchium/_modules/torch/optim/rprop.html" />
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Torchium
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/quickstart.html">Quickstart Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/advanced_usage.html">Advanced Usage Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/domain_specific_usage.html">Domain-Specific Usage Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/performance_guide.html">Performance Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/cuda_integration.html">CUDA Integration and Custom Kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/cython_optimizations.html">Cython Optimizations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/optimizers.html">Optimizers API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/losses.html">Loss Functions API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/computer_vision.html">Computer Vision Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/nlp.html">Natural Language Processing Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/generative_models.html">Generative Models Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/optimization_comparison.html">Optimization Comparison Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/benchmarks.html">Benchmarks Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Torchium</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">torch.optim.rprop</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for torch.optim.rprop</h1><div class="highlight"><pre>
+<span></span><span class="c1"># mypy: allow-untyped-defs</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;Implementation for the Resilient backpropagation.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">cast</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tensor</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.optimizer</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_capturable_doc</span><span class="p">,</span>
+    <span class="n">_default_to_fused_or_foreach</span><span class="p">,</span>
+    <span class="n">_differentiable_doc</span><span class="p">,</span>
+    <span class="n">_disable_dynamo_if_unsupported</span><span class="p">,</span>
+    <span class="n">_foreach_doc</span><span class="p">,</span>
+    <span class="n">_get_capturable_supported_devices</span><span class="p">,</span>
+    <span class="n">_get_scalar_dtype</span><span class="p">,</span>
+    <span class="n">_maximize_doc</span><span class="p">,</span>
+    <span class="n">_params_doc</span><span class="p">,</span>
+    <span class="n">_to_scalar</span><span class="p">,</span>
+    <span class="n">_use_grad_for_differentiable</span><span class="p">,</span>
+    <span class="n">_view_as_real</span><span class="p">,</span>
+    <span class="n">Optimizer</span><span class="p">,</span>
+    <span class="n">ParamsT</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Rprop&quot;</span><span class="p">,</span> <span class="s2">&quot;rprop&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="Rprop">
+<a class="viewcode-back" href="../../../api/optimizers.html#torchium.optimizers.Rprop">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Rprop</span><span class="p">(</span><span class="n">Optimizer</span><span class="p">):</span>  <span class="c1"># noqa: D101</span>
+<div class="viewcode-block" id="Rprop.__init__">
+<a class="viewcode-back" href="../../../api/optimizers.html#torchium.optimizers.Rprop.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">ParamsT</span><span class="p">,</span>
+        <span class="n">lr</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-2</span><span class="p">,</span>
+        <span class="n">etas</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">),</span>
+        <span class="n">step_sizes</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1e-6</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">capturable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">foreach</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">maximize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">differentiable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>  <span class="c1"># noqa: D107</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lr</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">)</span> <span class="ow">and</span> <span class="n">lr</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Tensor lr must be 1-element&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">lr</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid learning rate: </span><span class="si">{</span><span class="n">lr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">etas</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">&lt;</span> <span class="n">etas</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid eta values: </span><span class="si">{</span><span class="n">etas</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">etas</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">defaults</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span>
+            <span class="n">etas</span><span class="o">=</span><span class="n">etas</span><span class="p">,</span>
+            <span class="n">step_sizes</span><span class="o">=</span><span class="n">step_sizes</span><span class="p">,</span>
+            <span class="n">foreach</span><span class="o">=</span><span class="n">foreach</span><span class="p">,</span>
+            <span class="n">maximize</span><span class="o">=</span><span class="n">maximize</span><span class="p">,</span>
+            <span class="n">differentiable</span><span class="o">=</span><span class="n">differentiable</span><span class="p">,</span>
+            <span class="n">capturable</span><span class="o">=</span><span class="n">capturable</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">defaults</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>  <span class="c1"># noqa: D105</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__setstate__</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
+            <span class="n">group</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;foreach&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">group</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;maximize&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="n">group</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;differentiable&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="n">group</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;capturable&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">]:</span>
+                <span class="n">p_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p_state</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">p_state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">]):</span>
+                    <span class="n">step_val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">p_state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">])</span>
+                    <span class="n">p_state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+                            <span class="n">step_val</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">_get_scalar_dtype</span><span class="p">(),</span> <span class="n">device</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">device</span>
+                        <span class="p">)</span>
+                        <span class="k">if</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;capturable&quot;</span><span class="p">]</span>
+                        <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">step_val</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">_get_scalar_dtype</span><span class="p">())</span>
+                    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">prevs</span><span class="p">,</span> <span class="n">step_sizes</span><span class="p">,</span> <span class="n">state_steps</span><span class="p">):</span>
+        <span class="n">has_complex</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">has_complex</span> <span class="o">|=</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_complex</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+            <span class="n">grad</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span>
+            <span class="k">if</span> <span class="n">grad</span><span class="o">.</span><span class="n">is_sparse</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Rprop does not support sparse gradients&quot;</span><span class="p">)</span>
+
+            <span class="n">grads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">grad</span><span class="p">)</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+
+            <span class="c1"># State initialization</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">_get_scalar_dtype</span><span class="p">(),</span> <span class="n">device</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;capturable&quot;</span><span class="p">]</span>
+                    <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">_get_scalar_dtype</span><span class="p">())</span>
+                <span class="p">)</span>
+
+                <span class="n">state</span><span class="p">[</span><span class="s2">&quot;prev&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">memory_format</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">preserve_format</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">is_complex</span><span class="p">:</span>
+                    <span class="c1"># Complex Number should be as if they are two independent real numbers.</span>
+                    <span class="c1"># Hence the step_size shouldn&#39;t be zero for imaginary part.</span>
+                    <span class="n">state</span><span class="p">[</span><span class="s2">&quot;step_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span>
+                        <span class="n">grad</span><span class="p">,</span> <span class="nb">complex</span><span class="p">(</span><span class="n">group</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">],</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">])</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">state</span><span class="p">[</span><span class="s2">&quot;step_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">grad</span><span class="p">,</span> <span class="n">_to_scalar</span><span class="p">(</span><span class="n">group</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">]))</span>
+
+            <span class="n">prevs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;prev&quot;</span><span class="p">])</span>
+            <span class="n">step_sizes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;step_size&quot;</span><span class="p">])</span>
+            <span class="n">state_steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">has_complex</span>
+
+<div class="viewcode-block" id="Rprop.step">
+<a class="viewcode-back" href="../../../api/optimizers.html#torchium.optimizers.Rprop.step">[docs]</a>
+    <span class="nd">@_use_grad_for_differentiable</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">closure</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform a single optimization step.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            closure (Callable, optional): A closure that reevaluates the model</span>
+<span class="sd">                and returns the loss.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cuda_graph_capture_health_check</span><span class="p">()</span>
+
+        <span class="n">loss</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">closure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">enable_grad</span><span class="p">():</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="n">closure</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">grads</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">prevs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">step_sizes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">state_steps</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="n">etaminus</span><span class="p">,</span> <span class="n">etaplus</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;etas&quot;</span><span class="p">]</span>
+            <span class="n">step_size_min</span><span class="p">,</span> <span class="n">step_size_max</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;step_sizes&quot;</span><span class="p">]</span>
+            <span class="n">foreach</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;foreach&quot;</span><span class="p">]</span>
+            <span class="n">maximize</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;maximize&quot;</span><span class="p">]</span>
+
+            <span class="n">has_complex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_group</span><span class="p">(</span>
+                <span class="n">group</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">prevs</span><span class="p">,</span> <span class="n">step_sizes</span><span class="p">,</span> <span class="n">state_steps</span>
+            <span class="p">)</span>
+
+            <span class="n">rprop</span><span class="p">(</span>
+                <span class="n">params</span><span class="p">,</span>
+                <span class="n">grads</span><span class="p">,</span>
+                <span class="n">prevs</span><span class="p">,</span>
+                <span class="n">step_sizes</span><span class="p">,</span>
+                <span class="n">state_steps</span><span class="p">,</span>
+                <span class="n">step_size_min</span><span class="o">=</span><span class="n">step_size_min</span><span class="p">,</span>
+                <span class="n">step_size_max</span><span class="o">=</span><span class="n">step_size_max</span><span class="p">,</span>
+                <span class="n">etaminus</span><span class="o">=</span><span class="n">etaminus</span><span class="p">,</span>
+                <span class="n">etaplus</span><span class="o">=</span><span class="n">etaplus</span><span class="p">,</span>
+                <span class="n">foreach</span><span class="o">=</span><span class="n">foreach</span><span class="p">,</span>
+                <span class="n">maximize</span><span class="o">=</span><span class="n">maximize</span><span class="p">,</span>
+                <span class="n">differentiable</span><span class="o">=</span><span class="n">group</span><span class="p">[</span><span class="s2">&quot;differentiable&quot;</span><span class="p">],</span>
+                <span class="n">capturable</span><span class="o">=</span><span class="n">group</span><span class="p">[</span><span class="s2">&quot;capturable&quot;</span><span class="p">],</span>
+                <span class="n">has_complex</span><span class="o">=</span><span class="n">has_complex</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">loss</span></div>
+</div>
+
+
+
+<span class="n">Rprop</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="p">(</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Implements the resilient backpropagation algorithm.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">       \begin{aligned}</span>
+<span class="sd">            &amp;\rule{110mm}{0.4pt}                                                                 \\</span>
+<span class="sd">            &amp;\textbf{input}      : \theta_0 \in \mathbf{R}^d \text{ (params)},f(\theta)</span>
+<span class="sd">                \text{ (objective)},                                                             \\</span>
+<span class="sd">            &amp;\hspace{13mm}      \eta_{+/-} \text{ (etaplus, etaminus)}, \Gamma_{max/min}</span>
+<span class="sd">                \text{ (step sizes)}                                                             \\</span>
+<span class="sd">            &amp;\textbf{initialize} :   g^0_{prev} \leftarrow 0,</span>
+<span class="sd">                \: \eta_0 \leftarrow \text{lr (learning rate)}                                   \\</span>
+<span class="sd">            &amp;\rule{110mm}{0.4pt}                                                                 \\</span>
+<span class="sd">            &amp;\textbf{for} \: t=1 \: \textbf{to} \: \ldots \: \textbf{do}                         \\</span>
+<span class="sd">            &amp;\hspace{5mm}g_t           \leftarrow   \nabla_{\theta} f_t (\theta_{t-1})           \\</span>
+<span class="sd">            &amp;\hspace{5mm} \textbf{for} \text{  } i = 0, 1, \ldots, d-1 \: \mathbf{do}            \\</span>
+<span class="sd">            &amp;\hspace{10mm}  \textbf{if} \:   g^i_{prev} g^i_t  &gt; 0                               \\</span>
+<span class="sd">            &amp;\hspace{15mm}  \eta^i_t \leftarrow \mathrm{min}(\eta^i_{t-1} \eta_{+},</span>
+<span class="sd">                \Gamma_{max})                                                                    \\</span>
+<span class="sd">            &amp;\hspace{10mm}  \textbf{else if}  \:  g^i_{prev} g^i_t &lt; 0                           \\</span>
+<span class="sd">            &amp;\hspace{15mm}  \eta^i_t \leftarrow \mathrm{max}(\eta^i_{t-1} \eta_{-},</span>
+<span class="sd">                \Gamma_{min})                                                                    \\</span>
+<span class="sd">            &amp;\hspace{15mm}  g^i_t \leftarrow 0                                                   \\</span>
+<span class="sd">            &amp;\hspace{10mm}  \textbf{else}  \:                                                    \\</span>
+<span class="sd">            &amp;\hspace{15mm}  \eta^i_t \leftarrow \eta^i_{t-1}                                     \\</span>
+<span class="sd">            &amp;\hspace{5mm}\theta_t \leftarrow \theta_{t-1}- \eta_t \mathrm{sign}(g_t)             \\</span>
+<span class="sd">            &amp;\hspace{5mm}g_{prev} \leftarrow  g_t                                                \\</span>
+<span class="sd">            &amp;\rule{110mm}{0.4pt}                                                          \\[-1.ex]</span>
+<span class="sd">            &amp;\bf{return} \:  \theta_t                                                     \\[-1.ex]</span>
+<span class="sd">            &amp;\rule{110mm}{0.4pt}                                                          \\[-1.ex]</span>
+<span class="sd">       \end{aligned}</span>
+
+<span class="sd">    For further details regarding the algorithm we refer to the paper</span>
+<span class="sd">    `A Direct Adaptive Method for Faster Backpropagation Learning: The RPROP Algorithm</span>
+<span class="sd">    &lt;http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.21.1417&gt;`_.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="o">+</span> <span class="sa">rf</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    Args:</span>
+<span class="s2">        </span><span class="si">{</span><span class="n">_params_doc</span><span class="si">}</span>
+<span class="s2">        lr (float, optional): learning rate (default: 1e-2)</span>
+<span class="s2">        etas (Tuple[float, float], optional): pair of (etaminus, etaplus), that</span>
+<span class="s2">            are multiplicative increase and decrease factors</span>
+<span class="s2">            (default: (0.5, 1.2))</span>
+<span class="s2">        step_sizes (Tuple[float, float], optional): a pair of minimal and</span>
+<span class="s2">            maximal allowed step sizes (default: (1e-6, 50))</span>
+<span class="s2">        </span><span class="si">{</span><span class="n">_capturable_doc</span><span class="si">}</span>
+<span class="s2">        </span><span class="si">{</span><span class="n">_foreach_doc</span><span class="si">}</span>
+<span class="s2">        </span><span class="si">{</span><span class="n">_maximize_doc</span><span class="si">}</span>
+<span class="s2">        </span><span class="si">{</span><span class="n">_differentiable_doc</span><span class="si">}</span>
+
+<span class="s2">    &quot;&quot;&quot;</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_single_tensor_rprop</span><span class="p">(</span>
+    <span class="n">params</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">],</span>
+    <span class="n">grads</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">],</span>
+    <span class="n">prevs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">],</span>
+    <span class="n">step_sizes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">],</span>
+    <span class="n">state_steps</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">step_size_min</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">step_size_max</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">etaminus</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">etaplus</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">maximize</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">capturable</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">differentiable</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">has_complex</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+        <span class="n">grad</span> <span class="o">=</span> <span class="n">grads</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">grad</span> <span class="o">=</span> <span class="n">grad</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">maximize</span> <span class="k">else</span> <span class="o">-</span><span class="n">grad</span>
+        <span class="n">prev</span> <span class="o">=</span> <span class="n">prevs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">step_size</span> <span class="o">=</span> <span class="n">step_sizes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="n">state_steps</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="c1"># If compiling, the compiler will handle cudagraph checks, see note [torch.compile x capturable]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">compiler</span><span class="o">.</span><span class="n">is_compiling</span><span class="p">()</span> <span class="ow">and</span> <span class="n">capturable</span><span class="p">:</span>
+            <span class="n">capturable_supported_devices</span> <span class="o">=</span> <span class="n">_get_capturable_supported_devices</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">param</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">step</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">type</span>
+                <span class="ow">and</span> <span class="n">param</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="n">capturable_supported_devices</span>
+            <span class="p">),</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;If capturable=True, params and state_steps must be on supported devices: </span><span class="si">{</span><span class="n">capturable_supported_devices</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">step</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_complex</span><span class="p">(</span><span class="n">param</span><span class="p">):</span>
+            <span class="n">grad</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">view_as_real</span><span class="p">(</span><span class="n">grad</span><span class="p">)</span>
+            <span class="n">prev</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">view_as_real</span><span class="p">(</span><span class="n">prev</span><span class="p">)</span>
+            <span class="n">param</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">view_as_real</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+            <span class="n">step_size</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">view_as_real</span><span class="p">(</span><span class="n">step_size</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">differentiable</span><span class="p">:</span>
+            <span class="n">sign</span> <span class="o">=</span> <span class="n">grad</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">prev</span><span class="o">.</span><span class="n">clone</span><span class="p">())</span><span class="o">.</span><span class="n">sign</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sign</span> <span class="o">=</span> <span class="n">grad</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">prev</span><span class="p">)</span><span class="o">.</span><span class="n">sign</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">capturable</span><span class="p">:</span>
+            <span class="n">sign</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">sign</span><span class="o">.</span><span class="n">gt</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">etaplus</span><span class="p">,</span> <span class="n">sign</span><span class="p">))</span>
+            <span class="n">sign</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">sign</span><span class="o">.</span><span class="n">lt</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">etaminus</span><span class="p">,</span> <span class="n">sign</span><span class="p">))</span>
+            <span class="n">sign</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">sign</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sign</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sign</span><span class="p">[</span><span class="n">sign</span><span class="o">.</span><span class="n">gt</span><span class="p">(</span><span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="n">etaplus</span>
+            <span class="n">sign</span><span class="p">[</span><span class="n">sign</span><span class="o">.</span><span class="n">lt</span><span class="p">(</span><span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="n">etaminus</span>
+            <span class="n">sign</span><span class="p">[</span><span class="n">sign</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="c1"># update stepsizes with step size updates</span>
+        <span class="n">step_size</span><span class="o">.</span><span class="n">mul_</span><span class="p">(</span><span class="n">sign</span><span class="p">)</span><span class="o">.</span><span class="n">clamp_</span><span class="p">(</span><span class="n">step_size_min</span><span class="p">,</span> <span class="n">step_size_max</span><span class="p">)</span>
+
+        <span class="c1"># for dir&lt;0, dfdx=0</span>
+        <span class="c1"># for dir&gt;=0 dfdx=dfdx</span>
+        <span class="n">grad</span> <span class="o">=</span> <span class="n">grad</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">memory_format</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">preserve_format</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">capturable</span><span class="p">:</span>
+            <span class="n">grad</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">sign</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">etaminus</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">grad</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">grad</span><span class="p">[</span><span class="n">sign</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">etaminus</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># update parameters</span>
+        <span class="n">param</span><span class="o">.</span><span class="n">addcmul_</span><span class="p">(</span><span class="n">grad</span><span class="o">.</span><span class="n">sign</span><span class="p">(),</span> <span class="n">step_size</span><span class="p">,</span> <span class="n">value</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">prev</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">grad</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_multi_tensor_rprop</span><span class="p">(</span>
+    <span class="n">params</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">],</span>
+    <span class="n">grads</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">],</span>
+    <span class="n">prevs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">],</span>
+    <span class="n">step_sizes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">],</span>
+    <span class="n">state_steps</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">step_size_min</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">step_size_max</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">etaminus</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">etaplus</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">maximize</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">capturable</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">differentiable</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">has_complex</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">differentiable</span><span class="p">,</span> <span class="s2">&quot;_foreach ops don&#39;t support autograd&quot;</span>
+
+    <span class="c1"># If compiling, the compiler will handle cudagraph checks, see note [torch.compile x capturable]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">compiler</span><span class="o">.</span><span class="n">is_compiling</span><span class="p">()</span> <span class="ow">and</span> <span class="n">capturable</span><span class="p">:</span>
+        <span class="n">capturable_supported_devices</span> <span class="o">=</span> <span class="n">_get_capturable_supported_devices</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">step</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">type</span>
+            <span class="ow">and</span> <span class="n">p</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="n">capturable_supported_devices</span>
+            <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">state_steps</span><span class="p">)</span>
+        <span class="p">),</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;If capturable=True, params and state_steps must be on supported devices: </span><span class="si">{</span><span class="n">capturable_supported_devices</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">grouped_tensors</span> <span class="o">=</span> <span class="n">Optimizer</span><span class="o">.</span><span class="n">_group_tensors_by_device_and_dtype</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">params</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">prevs</span><span class="p">,</span> <span class="n">step_sizes</span><span class="p">,</span> <span class="n">state_steps</span><span class="p">]</span>  <span class="c1"># type: ignore[list-item]</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="p">(</span>
+        <span class="n">grouped_params_</span><span class="p">,</span>
+        <span class="n">grouped_grads_</span><span class="p">,</span>
+        <span class="n">grouped_prevs_</span><span class="p">,</span>
+        <span class="n">grouped_step_sizes_</span><span class="p">,</span>
+        <span class="n">grouped_state_steps_</span><span class="p">,</span>
+    <span class="p">),</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">grouped_tensors</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">grouped_params</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">grouped_params_</span><span class="p">)</span>
+        <span class="n">grouped_grads</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">grouped_grads_</span><span class="p">)</span>
+        <span class="n">grouped_prevs</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">grouped_prevs_</span><span class="p">)</span>
+        <span class="n">grouped_step_sizes</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">grouped_step_sizes_</span><span class="p">)</span>
+        <span class="n">grouped_state_steps</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">grouped_state_steps_</span><span class="p">)</span>
+
+        <span class="c1"># Update steps</span>
+        <span class="c1"># If steps are on CPU, foreach will fall back to the slow path, which is a for-loop calling t.add(1) over</span>
+        <span class="c1"># and over. 1 will then be wrapped into a Tensor over and over again, which is slower than if we just</span>
+        <span class="c1"># wrapped it once now. The alpha is required to assure we go to the right overload.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">compiler</span><span class="o">.</span><span class="n">is_compiling</span><span class="p">()</span> <span class="ow">and</span> <span class="n">grouped_state_steps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">is_cpu</span><span class="p">:</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">_foreach_add_</span><span class="p">(</span>
+                <span class="n">grouped_state_steps</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">_foreach_add_</span><span class="p">(</span><span class="n">grouped_state_steps</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Handle complex params</span>
+        <span class="k">if</span> <span class="n">has_complex</span><span class="p">:</span>
+            <span class="n">_view_as_real</span><span class="p">(</span>
+                <span class="n">grouped_params</span><span class="p">,</span> <span class="n">grouped_grads</span><span class="p">,</span> <span class="n">grouped_prevs</span><span class="p">,</span> <span class="n">grouped_step_sizes</span>
+            <span class="p">)</span>
+
+        <span class="n">signs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">_foreach_mul</span><span class="p">(</span><span class="n">grouped_grads</span><span class="p">,</span> <span class="n">grouped_prevs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">maximize</span><span class="p">:</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">_foreach_neg_</span><span class="p">(</span><span class="n">signs</span><span class="p">)</span>
+
+        <span class="c1"># At the end of the step, grouped_prevs will contain the current grads, so we reuse</span>
+        <span class="c1"># grouped_prevs memory instead of creating a new buffer, but, for clarity, we reassign</span>
+        <span class="c1"># to keep referring to the buffer as grouped_grads.</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">_foreach_copy_</span><span class="p">(</span><span class="n">grouped_prevs</span><span class="p">,</span> <span class="n">grouped_grads</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">maximize</span><span class="p">:</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">_foreach_neg_</span><span class="p">(</span><span class="n">grouped_prevs</span><span class="p">)</span>
+        <span class="n">grouped_grads</span> <span class="o">=</span> <span class="n">grouped_prevs</span>
+
+        <span class="n">torch</span><span class="o">.</span><span class="n">_foreach_sign_</span><span class="p">(</span><span class="n">signs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">capturable</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">sign</span> <span class="ow">in</span> <span class="n">signs</span><span class="p">:</span>
+                <span class="n">sign</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">sign</span><span class="o">.</span><span class="n">gt</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">etaplus</span><span class="p">,</span> <span class="n">sign</span><span class="p">))</span>
+                <span class="n">sign</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">sign</span><span class="o">.</span><span class="n">lt</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">etaminus</span><span class="p">,</span> <span class="n">sign</span><span class="p">))</span>
+                <span class="n">sign</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">sign</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sign</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">sign</span> <span class="ow">in</span> <span class="n">signs</span><span class="p">:</span>
+                <span class="n">sign</span><span class="p">[</span><span class="n">sign</span><span class="o">.</span><span class="n">gt</span><span class="p">(</span><span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="n">etaplus</span>
+                <span class="n">sign</span><span class="p">[</span><span class="n">sign</span><span class="o">.</span><span class="n">lt</span><span class="p">(</span><span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="n">etaminus</span>
+                <span class="n">sign</span><span class="p">[</span><span class="n">sign</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="c1"># update stepsizes with step size updates</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">_foreach_mul_</span><span class="p">(</span><span class="n">grouped_step_sizes</span><span class="p">,</span> <span class="n">signs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">step_size</span> <span class="ow">in</span> <span class="n">grouped_step_sizes</span><span class="p">:</span>
+            <span class="n">step_size</span><span class="o">.</span><span class="n">clamp_</span><span class="p">(</span><span class="n">step_size_min</span><span class="p">,</span> <span class="n">step_size_max</span><span class="p">)</span>
+
+        <span class="c1"># for dir&lt;0, dfdx=0</span>
+        <span class="c1"># for dir&gt;=0 dfdx=dfdx</span>
+        <span class="n">grouped_grads</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">grouped_grads</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">grouped_grads</span><span class="p">)):</span>
+            <span class="n">grouped_grads</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">signs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">etaminus</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">grouped_grads</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="p">)</span>
+
+        <span class="c1"># explicitly del signs as it&#39;s not used after here to save memory</span>
+        <span class="k">del</span> <span class="n">signs</span>
+
+        <span class="c1"># update parameters</span>
+        <span class="n">grad_signs</span> <span class="o">=</span> <span class="p">[</span><span class="n">grad</span><span class="o">.</span><span class="n">sign</span><span class="p">()</span> <span class="k">for</span> <span class="n">grad</span> <span class="ow">in</span> <span class="n">grouped_grads</span><span class="p">]</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">_foreach_addcmul_</span><span class="p">(</span>
+            <span class="n">grouped_params</span><span class="p">,</span> <span class="n">grad_signs</span><span class="p">,</span> <span class="n">grouped_step_sizes</span><span class="p">,</span> <span class="n">value</span><span class="o">=-</span><span class="mi">1</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Logically, you may expect grouped_prevs to get updated to grouped_grads, but that&#39;s</span>
+        <span class="c1"># basically already happened since we&#39;ve been using grouped_prevs&#39; memory to store</span>
+        <span class="c1"># updated grouped_grads!</span>
+
+
+<span class="nd">@_disable_dynamo_if_unsupported</span><span class="p">(</span><span class="n">single_tensor_fn</span><span class="o">=</span><span class="n">_single_tensor_rprop</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">rprop</span><span class="p">(</span>
+    <span class="n">params</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">],</span>
+    <span class="n">grads</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">],</span>
+    <span class="n">prevs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">],</span>
+    <span class="n">step_sizes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">],</span>
+    <span class="n">state_steps</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tensor</span><span class="p">],</span>
+    <span class="c1"># kwonly args with defaults are not supported by functions compiled with torchscript issue #70627</span>
+    <span class="c1"># setting this as kwarg for now as functional API is compiled by torch/distributed/optim</span>
+    <span class="n">foreach</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">capturable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">maximize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">differentiable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">has_complex</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">step_size_min</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">step_size_max</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">etaminus</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">etaplus</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Functional API that performs rprop algorithm computation.</span>
+
+<span class="sd">    See :class:`~torch.optim.Rprop` for details.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># this check is slow during compilation, so we skip it</span>
+    <span class="c1"># if it&#39;s strictly needed we can add this check back in dynamo</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">compiler</span><span class="o">.</span><span class="n">is_compiling</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">state_steps</span>
+    <span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">&quot;API has changed, `state_steps` argument must contain a list of singleton tensors&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">foreach</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">foreach</span> <span class="o">=</span> <span class="n">_default_to_fused_or_foreach</span><span class="p">(</span>
+            <span class="n">params</span><span class="p">,</span> <span class="n">differentiable</span><span class="p">,</span> <span class="n">use_fused</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">foreach</span> <span class="ow">and</span> <span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">is_scripting</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;torch.jit.script not supported with foreach optimizers&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">foreach</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">is_scripting</span><span class="p">():</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="n">_multi_tensor_rprop</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="n">_single_tensor_rprop</span>
+
+    <span class="n">func</span><span class="p">(</span>
+        <span class="n">params</span><span class="p">,</span>
+        <span class="n">grads</span><span class="p">,</span>
+        <span class="n">prevs</span><span class="p">,</span>
+        <span class="n">step_sizes</span><span class="p">,</span>
+        <span class="n">state_steps</span><span class="p">,</span>
+        <span class="n">step_size_min</span><span class="o">=</span><span class="n">step_size_min</span><span class="p">,</span>
+        <span class="n">step_size_max</span><span class="o">=</span><span class="n">step_size_max</span><span class="p">,</span>
+        <span class="n">etaminus</span><span class="o">=</span><span class="n">etaminus</span><span class="p">,</span>
+        <span class="n">etaplus</span><span class="o">=</span><span class="n">etaplus</span><span class="p">,</span>
+        <span class="n">capturable</span><span class="o">=</span><span class="n">capturable</span><span class="p">,</span>
+        <span class="n">maximize</span><span class="o">=</span><span class="n">maximize</span><span class="p">,</span>
+        <span class="n">differentiable</span><span class="o">=</span><span class="n">differentiable</span><span class="p">,</span>
+        <span class="n">has_complex</span><span class="o">=</span><span class="n">has_complex</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Torchium Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

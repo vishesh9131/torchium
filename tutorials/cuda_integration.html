@@ -1,0 +1,539 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CUDA Integration and Custom Kernels &mdash; Torchium 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=14fc6294" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=14fc6294" />
+
+  
+    <link rel="shortcut icon" href="../_static/logo.png"/>
+    <link rel="canonical" href="https://vishesh9131.github.io/torchium/tutorials/cuda_integration.html" />
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Cython Optimizations" href="cython_optimizations.html" />
+    <link rel="prev" title="Performance Guide" href="performance_guide.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Torchium
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_usage.html">Advanced Usage Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="domain_specific_usage.html">Domain-Specific Usage Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance_guide.html">Performance Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">CUDA Integration and Custom Kernels</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cuda-kernel-architecture">CUDA Kernel Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#matrix-operations">Matrix Operations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#shampoo-matrix-square-roots">Shampoo Matrix Square Roots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#kfac-kronecker-products">KFAC Kronecker Products</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#per-sample-gradients">Per-Sample Gradients</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#using-functorch-recommended">Using functorch (Recommended)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#custom-autograd-functions">Custom Autograd Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#memory-management">Memory Management</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#memory-efficient-matrix-multiplication">Memory-Efficient Matrix Multiplication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#memory-information">Memory Information</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#custom-c-cuda-kernels">Custom C++/CUDA Kernels</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#setting-up-custom-kernels">Setting Up Custom Kernels</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#performance-optimization-tips">Performance Optimization Tips</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#common-issues-and-solutions">Common Issues and Solutions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#example-complete-cuda-optimized-optimizer">Example: Complete CUDA-Optimized Optimizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#best-practices">Best Practices</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cython_optimizations.html">Cython Optimizations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/optimizers.html">Optimizers API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/losses.html">Loss Functions API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/computer_vision.html">Computer Vision Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/nlp.html">Natural Language Processing Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/generative_models.html">Generative Models Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/optimization_comparison.html">Optimization Comparison Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/benchmarks.html">Benchmarks Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Torchium</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">CUDA Integration and Custom Kernels</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorials/cuda_integration.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="cuda-integration-and-custom-kernels">
+<h1>CUDA Integration and Custom Kernels<a class="headerlink" href="#cuda-integration-and-custom-kernels" title="Link to this heading"></a></h1>
+<p>Torchium provides comprehensive CUDA integration for high-performance optimization algorithms. This guide covers how to integrate custom C++/CUDA kernels and optimize performance-critical operations.</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>Torchium’s CUDA integration includes:</p>
+<ul class="simple">
+<li><p><strong>Custom CUDA kernels</strong> for matrix operations (e.g., Shampoo’s matrix square roots)</p></li>
+<li><p><strong>Per-sample gradient computation</strong> using functorch and custom autograd functions</p></li>
+<li><p><strong>Memory-efficient operations</strong> for large-scale optimization</p></li>
+<li><p><strong>Automatic fallbacks</strong> to CPU implementations when CUDA is unavailable</p></li>
+</ul>
+</section>
+<section id="cuda-kernel-architecture">
+<h2>CUDA Kernel Architecture<a class="headerlink" href="#cuda-kernel-architecture" title="Link to this heading"></a></h2>
+<p>The CUDA integration is organized into several modules:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">torchium.utils.cuda_kernels</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CUDAMatrixOps</span><span class="p">,</span>      <span class="c1"># Matrix operations</span>
+    <span class="n">CUDAGradientOps</span><span class="p">,</span>    <span class="c1"># Gradient computations</span>
+    <span class="n">CUDAMemoryOps</span><span class="p">,</span>      <span class="c1"># Memory management</span>
+    <span class="n">is_cuda_available</span><span class="p">,</span>  <span class="c1"># Device utilities</span>
+    <span class="n">get_optimal_device</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="matrix-operations">
+<h2>Matrix Operations<a class="headerlink" href="#matrix-operations" title="Link to this heading"></a></h2>
+<p>CUDA-optimized matrix operations are essential for second-order optimizers like Shampoo and KFAC.</p>
+<section id="shampoo-matrix-square-roots">
+<h3>Shampoo Matrix Square Roots<a class="headerlink" href="#shampoo-matrix-square-roots" title="Link to this heading"></a></h3>
+<p>Shampoo requires computing matrix powers like <span class="math notranslate nohighlight">\(G^{-1/4}\)</span>. The CUDA implementation uses eigendecomposition:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchium.utils.cuda_kernels</span><span class="w"> </span><span class="kn">import</span> <span class="n">CUDAMatrixOps</span>
+
+<span class="c1"># Create a symmetric matrix</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>  <span class="c1"># Make symmetric</span>
+
+<span class="c1"># Compute G^(-1/4) using CUDA optimization</span>
+<span class="n">G_sqrt_inv</span> <span class="o">=</span> <span class="n">CUDAMatrixOps</span><span class="o">.</span><span class="n">matrix_sqrt_inv_eigen</span><span class="p">(</span>
+    <span class="n">G</span><span class="p">,</span>
+    <span class="n">power</span><span class="o">=-</span><span class="mf">0.25</span><span class="p">,</span>  <span class="c1"># -1/4 power</span>
+    <span class="n">eps</span><span class="o">=</span><span class="mf">1e-8</span>      <span class="c1"># Numerical stability</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="kfac-kronecker-products">
+<h3>KFAC Kronecker Products<a class="headerlink" href="#kfac-kronecker-products" title="Link to this heading"></a></h3>
+<p>KFAC uses Kronecker products for efficient natural gradient computation:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">torchium.utils.cuda_kernels</span><span class="w"> </span><span class="kn">import</span> <span class="n">CUDAMatrixOps</span>
+
+<span class="c1"># Input and output covariance matrices</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span>
+
+<span class="c1"># Efficient Kronecker product approximation</span>
+<span class="n">kron_product</span> <span class="o">=</span> <span class="n">CUDAMatrixOps</span><span class="o">.</span><span class="n">kronecker_product_approx</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">G</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="per-sample-gradients">
+<h2>Per-Sample Gradients<a class="headerlink" href="#per-sample-gradients" title="Link to this heading"></a></h2>
+<p>Natural gradient methods require per-sample gradients for accurate Fisher Information Matrix estimation.</p>
+<section id="using-functorch-recommended">
+<h3>Using functorch (Recommended)<a class="headerlink" href="#using-functorch-recommended" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchium.utils.cuda_kernels</span><span class="w"> </span><span class="kn">import</span> <span class="n">CUDAGradientOps</span>
+
+<span class="c1"># Create model and data</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+<span class="n">inputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span>
+<span class="n">loss_fn</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
+
+<span class="c1"># Compute per-sample gradients</span>
+<span class="n">per_sample_grads</span> <span class="o">=</span> <span class="n">CUDAGradientOps</span><span class="o">.</span><span class="n">per_sample_gradients</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">targets</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="custom-autograd-functions">
+<h3>Custom Autograd Functions<a class="headerlink" href="#custom-autograd-functions" title="Link to this heading"></a></h3>
+<p>For more control, you can create custom autograd functions:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">PerSampleGradFunction</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">Function</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">bias</span><span class="p">):</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">save_for_backward</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">bias</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">linear</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">bias</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">backward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">grad_output</span><span class="p">):</span>
+        <span class="nb">input</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">bias</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">saved_tensors</span>
+
+        <span class="c1"># Compute per-sample gradients</span>
+        <span class="n">per_sample_grads</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">sample_input</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">sample_grad</span> <span class="o">=</span> <span class="n">grad_output</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="c1"># Compute gradient for this sample</span>
+            <span class="n">grad_weight</span> <span class="o">=</span> <span class="n">sample_grad</span><span class="o">.</span><span class="n">t</span><span class="p">()</span> <span class="o">@</span> <span class="n">sample_input</span>
+            <span class="n">per_sample_grads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">grad_weight</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">per_sample_grads</span><span class="p">),</span> <span class="kc">None</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="memory-management">
+<h2>Memory Management<a class="headerlink" href="#memory-management" title="Link to this heading"></a></h2>
+<p>CUDA memory management is crucial for large-scale optimization.</p>
+<section id="memory-efficient-matrix-multiplication">
+<h3>Memory-Efficient Matrix Multiplication<a class="headerlink" href="#memory-efficient-matrix-multiplication" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">torchium.utils.cuda_kernels</span><span class="w"> </span><span class="kn">import</span> <span class="n">CUDAMemoryOps</span>
+
+<span class="c1"># Large matrices that might cause OOM</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">5000</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">5000</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span>
+
+<span class="c1"># Memory-efficient multiplication with automatic chunking</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">CUDAMemoryOps</span><span class="o">.</span><span class="n">memory_efficient_matmul</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="memory-information">
+<h3>Memory Information<a class="headerlink" href="#memory-information" title="Link to this heading"></a></h3>
+<p>Monitor CUDA memory usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">torchium.utils.cuda_kernels</span><span class="w"> </span><span class="kn">import</span> <span class="n">cuda_memory_info</span>
+
+<span class="n">memory_info</span> <span class="o">=</span> <span class="n">cuda_memory_info</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total memory: </span><span class="si">{</span><span class="n">memory_info</span><span class="p">[</span><span class="s1">&#39;total_memory&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e9</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> GB&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Allocated: </span><span class="si">{</span><span class="n">memory_info</span><span class="p">[</span><span class="s1">&#39;allocated_memory&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e9</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> GB&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Free: </span><span class="si">{</span><span class="n">memory_info</span><span class="p">[</span><span class="s1">&#39;free_memory&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e9</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> GB&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="custom-c-cuda-kernels">
+<h2>Custom C++/CUDA Kernels<a class="headerlink" href="#custom-c-cuda-kernels" title="Link to this heading"></a></h2>
+<p>For maximum performance, you can integrate custom C++/CUDA kernels.</p>
+<section id="setting-up-custom-kernels">
+<h3>Setting Up Custom Kernels<a class="headerlink" href="#setting-up-custom-kernels" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Create CUDA kernel files</strong>:</p></li>
+</ol>
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="c1">// custom_kernels.cu</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;torch/extension.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda_runtime.h&gt;</span>
+
+<span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">matrix_sqrt_kernel</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">input</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">output</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">size</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">power</span>
+<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">blockIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">blockDim</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">idx</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">size</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">output</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">powf</span><span class="p">(</span><span class="n">input</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span><span class="w"> </span><span class="n">power</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">torch</span><span class="o">::</span><span class="n">Tensor</span><span class="w"> </span><span class="n">matrix_sqrt_cuda</span><span class="p">(</span><span class="n">torch</span><span class="o">::</span><span class="n">Tensor</span><span class="w"> </span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">power</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">torch</span><span class="o">::</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">input</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">256</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">blocks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">input</span><span class="p">.</span><span class="n">numel</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threads</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">threads</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">matrix_sqrt_kernel</span><span class="o">&lt;&lt;&lt;</span><span class="n">blocks</span><span class="p">,</span><span class="w"> </span><span class="n">threads</span><span class="o">&gt;&gt;&gt;</span><span class="p">(</span>
+<span class="w">        </span><span class="n">input</span><span class="p">.</span><span class="n">data_ptr</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(),</span>
+<span class="w">        </span><span class="n">output</span><span class="p">.</span><span class="n">data_ptr</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(),</span>
+<span class="w">        </span><span class="n">input</span><span class="p">.</span><span class="n">numel</span><span class="p">(),</span>
+<span class="w">        </span><span class="n">power</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">output</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">PYBIND11_MODULE</span><span class="p">(</span><span class="n">TORCH_EXTENSION_NAME</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">m</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;matrix_sqrt_cuda&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">matrix_sqrt_cuda</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Matrix square root CUDA kernel&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p><strong>Create Python wrapper</strong>:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># custom_kernels.py</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.cpp_extension</span><span class="w"> </span><span class="kn">import</span> <span class="n">load</span>
+
+<span class="c1"># Load the CUDA extension</span>
+<span class="n">custom_kernels</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;custom_kernels&quot;</span><span class="p">,</span>
+    <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;custom_kernels.cu&quot;</span><span class="p">],</span>
+    <span class="n">extra_cuda_cflags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-O3&quot;</span><span class="p">,</span> <span class="s2">&quot;--use_fast_math&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">matrix_sqrt_cuda_optimized</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">power</span><span class="o">=-</span><span class="mf">0.25</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;CUDA-optimized matrix square root.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">matrix</span><span class="o">.</span><span class="n">is_cuda</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">custom_kernels</span><span class="o">.</span><span class="n">matrix_sqrt_cuda</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">power</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Fallback to CPU</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">power</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p><strong>Integrate with Torchium</strong>:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># In your optimizer</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.custom_kernels</span><span class="w"> </span><span class="kn">import</span> <span class="n">matrix_sqrt_cuda_optimized</span>
+    <span class="n">CUSTOM_KERNELS_AVAILABLE</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">CUSTOM_KERNELS_AVAILABLE</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">OptimizedShampoo</span><span class="p">(</span><span class="n">Optimizer</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">closure</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># ... existing code ...</span>
+
+        <span class="k">if</span> <span class="n">CUSTOM_KERNELS_AVAILABLE</span> <span class="ow">and</span> <span class="n">G_l</span><span class="o">.</span><span class="n">is_cuda</span><span class="p">:</span>
+            <span class="n">G_l_sqrt_inv</span> <span class="o">=</span> <span class="n">matrix_sqrt_cuda_optimized</span><span class="p">(</span><span class="n">G_l</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.25</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Fallback to standard implementation</span>
+            <span class="n">G_l_sqrt_inv</span> <span class="o">=</span> <span class="n">CUDAMatrixOps</span><span class="o">.</span><span class="n">matrix_sqrt_inv_eigen</span><span class="p">(</span><span class="n">G_l</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.25</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="performance-optimization-tips">
+<h2>Performance Optimization Tips<a class="headerlink" href="#performance-optimization-tips" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>Use Mixed Precision Training</strong>:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">torch.cuda.amp</span><span class="w"> </span><span class="kn">import</span> <span class="n">autocast</span><span class="p">,</span> <span class="n">GradScaler</span>
+
+<span class="n">scaler</span> <span class="o">=</span> <span class="n">GradScaler</span><span class="p">()</span>
+
+<span class="k">with</span> <span class="n">autocast</span><span class="p">():</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+
+<span class="n">scaler</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="n">scaler</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
+<span class="n">scaler</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p><strong>Optimize Memory Layout</strong>:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use contiguous memory format</span>
+<span class="n">tensor</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">contiguous</span><span class="p">(</span><span class="n">memory_format</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">channels_last</span><span class="p">)</span>
+
+<span class="c1"># Efficient tensor creation</span>
+<span class="n">tensor</span> <span class="o">=</span> <span class="n">CUDAMemoryOps</span><span class="o">.</span><span class="n">efficient_tensor_creation</span><span class="p">(</span>
+    <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span>
+    <span class="n">device</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span><span class="p">),</span>
+    <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p><strong>Batch Operations</strong>:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Batch multiple small operations</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">CUDAMatrixOps</span><span class="o">.</span><span class="n">batch_matrix_multiply</span><span class="p">(</span>
+    <span class="n">A_batch</span><span class="p">,</span>  <span class="c1"># [batch_size, m, k]</span>
+    <span class="n">B_batch</span>   <span class="c1"># [batch_size, k, n]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h2>
+<section id="common-issues-and-solutions">
+<h3>Common Issues and Solutions<a class="headerlink" href="#common-issues-and-solutions" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>CUDA Out of Memory</strong>:
+- Use gradient checkpointing
+- Reduce batch size
+- Use memory-efficient operations
+- Enable memory pooling</p></li>
+<li><p><strong>Kernel Compilation Errors</strong>:
+- Check CUDA version compatibility
+- Ensure proper include paths
+- Use appropriate compiler flags</p></li>
+<li><p><strong>Performance Issues</strong>:
+- Profile with <cite>torch.profiler</cite>
+- Check memory bandwidth utilization
+- Optimize kernel launch parameters</p></li>
+</ol>
+</section>
+</section>
+<section id="example-complete-cuda-optimized-optimizer">
+<h2>Example: Complete CUDA-Optimized Optimizer<a class="headerlink" href="#example-complete-cuda-optimized-optimizer" title="Link to this heading"></a></h2>
+<p>Here’s a complete example of a CUDA-optimized optimizer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.optim.optimizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optimizer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchium.utils.cuda_kernels</span><span class="w"> </span><span class="kn">import</span> <span class="n">CUDAMatrixOps</span><span class="p">,</span> <span class="n">CUDAMemoryOps</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CUDAShampoo</span><span class="p">(</span><span class="n">Optimizer</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">update_freq</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+        <span class="n">defaults</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">,</span> <span class="n">update_freq</span><span class="o">=</span><span class="n">update_freq</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">defaults</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">closure</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">closure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">closure</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">group</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">grad</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">state</span><span class="p">[</span><span class="s1">&#39;step&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                        <span class="c1"># Use efficient tensor creation</span>
+                        <span class="n">state</span><span class="p">[</span><span class="s1">&#39;G_l&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CUDAMemoryOps</span><span class="o">.</span><span class="n">efficient_tensor_creation</span><span class="p">(</span>
+                            <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">p</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">dtype</span>
+                        <span class="p">)</span>
+                        <span class="n">state</span><span class="p">[</span><span class="s1">&#39;G_r&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CUDAMemoryOps</span><span class="o">.</span><span class="n">efficient_tensor_creation</span><span class="p">(</span>
+                            <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">p</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">dtype</span>
+                        <span class="p">)</span>
+
+                <span class="n">state</span><span class="p">[</span><span class="s1">&#39;step&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">G_l</span><span class="p">,</span> <span class="n">G_r</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;G_l&#39;</span><span class="p">],</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;G_r&#39;</span><span class="p">]</span>
+
+                    <span class="c1"># Update preconditioners</span>
+                    <span class="n">G_l</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">grad</span><span class="p">,</span> <span class="n">grad</span><span class="o">.</span><span class="n">t</span><span class="p">()))</span>
+                    <span class="n">G_r</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">grad</span><span class="o">.</span><span class="n">t</span><span class="p">(),</span> <span class="n">grad</span><span class="p">))</span>
+
+                    <span class="k">if</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;step&#39;</span><span class="p">]</span> <span class="o">%</span> <span class="n">group</span><span class="p">[</span><span class="s1">&#39;update_freq&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="c1"># CUDA-optimized matrix operations</span>
+                        <span class="n">G_l_sqrt_inv</span> <span class="o">=</span> <span class="n">CUDAMatrixOps</span><span class="o">.</span><span class="n">matrix_sqrt_inv_eigen</span><span class="p">(</span>
+                            <span class="n">G_l</span><span class="p">,</span> <span class="n">power</span><span class="o">=-</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">group</span><span class="p">[</span><span class="s1">&#39;eps&#39;</span><span class="p">]</span>
+                        <span class="p">)</span>
+                        <span class="n">G_r_sqrt_inv</span> <span class="o">=</span> <span class="n">CUDAMatrixOps</span><span class="o">.</span><span class="n">matrix_sqrt_inv_eigen</span><span class="p">(</span>
+                            <span class="n">G_r</span><span class="p">,</span> <span class="n">power</span><span class="o">=-</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">group</span><span class="p">[</span><span class="s1">&#39;eps&#39;</span><span class="p">]</span>
+                        <span class="p">)</span>
+
+                        <span class="c1"># Memory-efficient matrix multiplication</span>
+                        <span class="n">search_direction</span> <span class="o">=</span> <span class="n">CUDAMemoryOps</span><span class="o">.</span><span class="n">memory_efficient_matmul</span><span class="p">(</span>
+                            <span class="n">CUDAMemoryOps</span><span class="o">.</span><span class="n">memory_efficient_matmul</span><span class="p">(</span><span class="n">G_l_sqrt_inv</span><span class="p">,</span> <span class="n">grad</span><span class="p">),</span>
+                            <span class="n">G_r_sqrt_inv</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">search_direction</span> <span class="o">=</span> <span class="n">grad</span>
+
+                <span class="n">p</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="n">search_direction</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=-</span><span class="n">group</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">loss</span>
+</pre></div>
+</div>
+<p>This example demonstrates how to integrate CUDA optimizations into a complete optimizer implementation.</p>
+</section>
+<section id="best-practices">
+<h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>Always provide CPU fallbacks</strong> for maximum compatibility</p></li>
+<li><p><strong>Use proper error handling</strong> for CUDA operations</p></li>
+<li><p><strong>Profile performance</strong> to identify bottlenecks</p></li>
+<li><p><strong>Test on multiple GPU architectures</strong> for portability</p></li>
+<li><p><strong>Document memory requirements</strong> and performance characteristics</p></li>
+</ol>
+<p>For more advanced CUDA integration examples, see the <cite>examples/</cite> directory in the Torchium repository.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="performance_guide.html" class="btn btn-neutral float-left" title="Performance Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cython_optimizations.html" class="btn btn-neutral float-right" title="Cython Optimizations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Torchium Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,938 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Domain-Specific Usage Guide &mdash; Torchium 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=14fc6294" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=14fc6294" />
+
+  
+    <link rel="shortcut icon" href="../_static/logo.png"/>
+    <link rel="canonical" href="https://vishesh9131.github.io/torchium/tutorials/domain_specific_usage.html" />
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Performance Guide" href="performance_guide.html" />
+    <link rel="prev" title="Advanced Usage Guide" href="advanced_usage.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Torchium
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_usage.html">Advanced Usage Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Domain-Specific Usage Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#computer-vision">Computer Vision</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#object-detection">Object Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#advanced-detection-pipeline">Advanced Detection Pipeline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#image-segmentation">Image Segmentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#medical-image-segmentation">Medical Image Segmentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#super-resolution">Super Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#perceptual-super-resolution">Perceptual Super Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#style-transfer">Style Transfer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#neural-style-transfer">Neural Style Transfer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#natural-language-processing">Natural Language Processing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#transformer-training">Transformer Training</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#large-language-model-training">Large Language Model Training</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sequence-to-sequence-models">Sequence-to-Sequence Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#word-embeddings">Word Embeddings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#word2vec-training">Word2Vec Training</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#generative-models">Generative Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#gan-training">GAN Training</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#advanced-gan-training">Advanced GAN Training</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vae-training">VAE Training</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#beta-vae-for-disentangled-representations">Beta-VAE for Disentangled Representations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#diffusion-models">Diffusion Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ddpm-training">DDPM Training</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#metric-learning">Metric Learning</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#face-recognition">Face Recognition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#arcface-for-face-recognition">ArcFace for Face Recognition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#contrastive-learning">Contrastive Learning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#simclr-style-training">SimCLR-style Training</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#multi-task-learning">Multi-Task Learning</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#uncertainty-weighting">Uncertainty Weighting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#multi-task-computer-vision">Multi-Task Computer Vision</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#domain-specific-applications">Domain-Specific Applications</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#medical-imaging">Medical Imaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#medical-image-analysis">Medical Image Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#audio-processing">Audio Processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#audio-classification">Audio Classification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#time-series">Time Series</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#time-series-forecasting">Time Series Forecasting</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#best-practices-by-domain">Best Practices by Domain</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="performance_guide.html">Performance Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cuda_integration.html">CUDA Integration and Custom Kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cython_optimizations.html">Cython Optimizations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/optimizers.html">Optimizers API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/losses.html">Loss Functions API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/computer_vision.html">Computer Vision Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/nlp.html">Natural Language Processing Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/generative_models.html">Generative Models Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/optimization_comparison.html">Optimization Comparison Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/benchmarks.html">Benchmarks Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Torchium</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Domain-Specific Usage Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorials/domain_specific_usage.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="domain-specific-usage-guide">
+<h1>Domain-Specific Usage Guide<a class="headerlink" href="#domain-specific-usage-guide" title="Link to this heading"></a></h1>
+<p>This guide covers specialized usage patterns for different domains, showcasing how to leverage Torchium’s domain-specific optimizers and loss functions effectively.</p>
+<section id="computer-vision">
+<h2>Computer Vision<a class="headerlink" href="#computer-vision" title="Link to this heading"></a></h2>
+<section id="object-detection">
+<h3>Object Detection<a class="headerlink" href="#object-detection" title="Link to this heading"></a></h3>
+</section>
+<section id="advanced-detection-pipeline">
+<h3>Advanced Detection Pipeline<a class="headerlink" href="#advanced-detection-pipeline" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torchium</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DetectionModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">80</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backbone</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="mi">128</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regressor</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>  <span class="c1"># bbox coordinates</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">DetectionModel</span><span class="p">()</span>
+
+<span class="c1"># Use Ranger optimizer for computer vision</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Ranger</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">k</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="n">N_sma_threshhold</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">betas</span><span class="o">=</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">),</span>
+    <span class="n">eps</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
+    <span class="n">weight_decay</span><span class="o">=</span><span class="mf">1e-4</span>
+<span class="p">)</span>
+
+<span class="c1"># Advanced detection loss combining multiple IoU variants</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AdvancedDetectionLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cls_loss</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">FocalLoss</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">giou_loss</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">GIoULoss</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diou_loss</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">DIoULoss</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ciou_loss</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">CIoULoss</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cls_pred</span><span class="p">,</span> <span class="n">reg_pred</span><span class="p">,</span> <span class="n">cls_target</span><span class="p">,</span> <span class="n">reg_target</span><span class="p">):</span>
+        <span class="n">cls_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cls_loss</span><span class="p">(</span><span class="n">cls_pred</span><span class="p">,</span> <span class="n">cls_target</span><span class="p">)</span>
+        <span class="n">giou_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">giou_loss</span><span class="p">(</span><span class="n">reg_pred</span><span class="p">,</span> <span class="n">reg_target</span><span class="p">)</span>
+        <span class="n">diou_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">diou_loss</span><span class="p">(</span><span class="n">reg_pred</span><span class="p">,</span> <span class="n">reg_target</span><span class="p">)</span>
+        <span class="n">ciou_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ciou_loss</span><span class="p">(</span><span class="n">reg_pred</span><span class="p">,</span> <span class="n">reg_target</span><span class="p">)</span>
+
+        <span class="c1"># Weighted combination</span>
+        <span class="n">total_loss</span> <span class="o">=</span> <span class="n">cls_loss</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">giou_loss</span> <span class="o">+</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">diou_loss</span> <span class="o">+</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">ciou_loss</span>
+        <span class="k">return</span> <span class="n">total_loss</span>
+
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">AdvancedDetectionLoss</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="image-segmentation">
+<h3>Image Segmentation<a class="headerlink" href="#image-segmentation" title="Link to this heading"></a></h3>
+</section>
+<section id="medical-image-segmentation">
+<h3>Medical Image Segmentation<a class="headerlink" href="#medical-image-segmentation" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">UNet</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_channels</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">out_channels</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">UNet</span><span class="p">()</span>
+
+<span class="c1"># Use SAM for better generalization in medical imaging</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">SAM</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+    <span class="n">rho</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+    <span class="n">adaptive</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="c1"># Medical segmentation loss combination</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MedicalSegmentationLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dice</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">DiceLoss</span><span class="p">(</span><span class="n">smooth</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tversky</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">TverskyLoss</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">focal</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">FocalLoss</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lovasz</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">LovaszLoss</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="n">dice_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dice</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="n">tversky_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tversky</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="n">focal_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">focal</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="n">lovasz_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lovasz</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+
+        <span class="c1"># Medical imaging specific weighting</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mf">0.4</span> <span class="o">*</span> <span class="n">dice_loss</span> <span class="o">+</span>
+                <span class="mf">0.3</span> <span class="o">*</span> <span class="n">tversky_loss</span> <span class="o">+</span>
+                <span class="mf">0.2</span> <span class="o">*</span> <span class="n">focal_loss</span> <span class="o">+</span>
+                <span class="mf">0.1</span> <span class="o">*</span> <span class="n">lovasz_loss</span><span class="p">)</span>
+
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">MedicalSegmentationLoss</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="super-resolution">
+<h3>Super Resolution<a class="headerlink" href="#super-resolution" title="Link to this heading"></a></h3>
+</section>
+<section id="perceptual-super-resolution">
+<h3>Perceptual Super Resolution<a class="headerlink" href="#perceptual-super-resolution" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">SRResNet</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale_factor</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res_blocks</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="p">[</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="mi">64</span><span class="p">)</span>
+        <span class="p">]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv3</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">scale_factor</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pixel_shuffle</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">PixelShuffle</span><span class="p">(</span><span class="n">scale_factor</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">SRResNet</span><span class="p">()</span>
+
+<span class="c1"># Use Lookahead for stable super resolution training</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Lookahead</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">k</span><span class="o">=</span><span class="mi">5</span>
+<span class="p">)</span>
+
+<span class="c1"># Perceptual super resolution loss</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PerceptualSRLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mse</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">perceptual</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">PerceptualLoss</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ssim</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">SSIMLoss</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vgg</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">VGGLoss</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="n">mse_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mse</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="n">perceptual_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">perceptual</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="n">ssim_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ssim</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="n">vgg_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vgg</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="mf">0.1</span> <span class="o">*</span> <span class="n">mse_loss</span> <span class="o">+</span>
+                <span class="mf">0.6</span> <span class="o">*</span> <span class="n">perceptual_loss</span> <span class="o">+</span>
+                <span class="mf">0.2</span> <span class="o">*</span> <span class="n">ssim_loss</span> <span class="o">+</span>
+                <span class="mf">0.1</span> <span class="o">*</span> <span class="n">vgg_loss</span><span class="p">)</span>
+
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">PerceptualSRLoss</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="style-transfer">
+<h3>Style Transfer<a class="headerlink" href="#style-transfer" title="Link to this heading"></a></h3>
+</section>
+<section id="neural-style-transfer">
+<h3>Neural Style Transfer<a class="headerlink" href="#neural-style-transfer" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">StyleTransferModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="c1"># Use pre-trained VGG as feature extractor</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">torchvision.models</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">models</span>
+        <span class="n">vgg</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">vgg19</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">features</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">features</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span><span class="n">vgg</span><span class="p">[:</span><span class="mi">36</span><span class="p">])</span>  <span class="c1"># Up to conv4_4</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">StyleTransferModel</span><span class="p">()</span>
+
+<span class="c1"># Use Adam with custom parameters for style transfer</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+    <span class="n">betas</span><span class="o">=</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">),</span>
+    <span class="n">eps</span><span class="o">=</span><span class="mf">1e-8</span>
+<span class="p">)</span>
+
+<span class="c1"># Neural style transfer loss</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NeuralStyleLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content_loss</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">ContentLoss</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">style_loss</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">StyleLoss</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tv_loss</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">TotalVariationLoss</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generated</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">style</span><span class="p">):</span>
+        <span class="n">content_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content_loss</span><span class="p">(</span><span class="n">generated</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+        <span class="n">style_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">style_loss</span><span class="p">(</span><span class="n">generated</span><span class="p">,</span> <span class="n">style</span><span class="p">)</span>
+        <span class="n">tv_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tv_loss</span><span class="p">(</span><span class="n">generated</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">content_loss</span> <span class="o">+</span>
+                <span class="mf">100.0</span> <span class="o">*</span> <span class="n">style_loss</span> <span class="o">+</span>
+                <span class="mf">0.1</span> <span class="o">*</span> <span class="n">tv_loss</span><span class="p">)</span>
+
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">NeuralStyleLoss</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="natural-language-processing">
+<h2>Natural Language Processing<a class="headerlink" href="#natural-language-processing" title="Link to this heading"></a></h2>
+<section id="transformer-training">
+<h3>Transformer Training<a class="headerlink" href="#transformer-training" title="Link to this heading"></a></h3>
+</section>
+<section id="large-language-model-training">
+<h3>Large Language Model Training<a class="headerlink" href="#large-language-model-training" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">TransformerModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocab_size</span><span class="o">=</span><span class="mi">50000</span><span class="p">,</span> <span class="n">d_model</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">nhead</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">num_layers</span><span class="o">=</span><span class="mi">6</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">vocab_size</span><span class="p">,</span> <span class="n">d_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pos_encoding</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="n">d_model</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transformer</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">TransformerEncoder</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">TransformerEncoderLayer</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">nhead</span><span class="p">,</span> <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="n">num_layers</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">TransformerModel</span><span class="p">()</span>
+
+<span class="c1"># Use LAMB for large batch training</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">LAMB</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+    <span class="n">betas</span><span class="o">=</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">),</span>
+    <span class="n">eps</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
+    <span class="n">weight_decay</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">clamp_value</span><span class="o">=</span><span class="mf">10.0</span>
+<span class="p">)</span>
+
+<span class="c1"># Advanced NLP loss with label smoothing</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">LabelSmoothingLoss</span><span class="p">(</span>
+    <span class="n">num_classes</span><span class="o">=</span><span class="mi">50000</span><span class="p">,</span>
+    <span class="n">smoothing</span><span class="o">=</span><span class="mf">0.1</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="sequence-to-sequence-models">
+<h3>Sequence-to-Sequence Models<a class="headerlink" href="#sequence-to-sequence-models" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Seq2SeqModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_vocab_size</span><span class="p">,</span> <span class="n">output_vocab_size</span><span class="p">,</span> <span class="n">d_model</span><span class="o">=</span><span class="mi">512</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">TransformerEncoder</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">TransformerEncoderLayer</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="mi">6</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">TransformerDecoder</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">TransformerDecoderLayer</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="mi">6</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_projection</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">output_vocab_size</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Seq2SeqModel</span><span class="p">(</span><span class="n">input_vocab_size</span><span class="o">=</span><span class="mi">30000</span><span class="p">,</span> <span class="n">output_vocab_size</span><span class="o">=</span><span class="mi">30000</span><span class="p">)</span>
+
+<span class="c1"># Use NovoGrad for NLP tasks</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">NovoGrad</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+    <span class="n">betas</span><span class="o">=</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">),</span>
+    <span class="n">eps</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
+    <span class="n">weight_decay</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">grad_averaging</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="c1"># Combined loss for seq2seq</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Seq2SeqLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ce_loss</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_smoothing</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">LabelSmoothingLoss</span><span class="p">(</span>
+            <span class="n">num_classes</span><span class="o">=</span><span class="mi">30000</span><span class="p">,</span> <span class="n">smoothing</span><span class="o">=</span><span class="mf">0.1</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="n">ce_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ce_loss</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="n">smooth_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_smoothing</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mf">0.7</span> <span class="o">*</span> <span class="n">ce_loss</span> <span class="o">+</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">smooth_loss</span>
+
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">Seq2SeqLoss</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="word-embeddings">
+<h3>Word Embeddings<a class="headerlink" href="#word-embeddings" title="Link to this heading"></a></h3>
+</section>
+<section id="word2vec-training">
+<h3>Word2Vec Training<a class="headerlink" href="#word2vec-training" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Word2VecModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="o">=</span><span class="mi">300</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_embeddings</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">vocab_size</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context_embeddings</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">vocab_size</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Word2VecModel</span><span class="p">(</span><span class="n">vocab_size</span><span class="o">=</span><span class="mi">100000</span><span class="p">)</span>
+
+<span class="c1"># Use SGD for word embeddings</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">0.025</span><span class="p">,</span>
+    <span class="n">momentum</span><span class="o">=</span><span class="mf">0.9</span>
+<span class="p">)</span>
+
+<span class="c1"># Word2Vec specific loss</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">Word2VecLoss</span><span class="p">(</span>
+    <span class="n">vocab_size</span><span class="o">=</span><span class="mi">100000</span><span class="p">,</span>
+    <span class="n">embedding_dim</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+    <span class="n">negative_samples</span><span class="o">=</span><span class="mi">5</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="generative-models">
+<h2>Generative Models<a class="headerlink" href="#generative-models" title="Link to this heading"></a></h2>
+<section id="gan-training">
+<h3>GAN Training<a class="headerlink" href="#gan-training" title="Link to this heading"></a></h3>
+</section>
+<section id="advanced-gan-training">
+<h3>Advanced GAN Training<a class="headerlink" href="#advanced-gan-training" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Generator</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">latent_dim</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">output_dim</span><span class="o">=</span><span class="mi">784</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">net</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">latent_dim</span><span class="p">,</span> <span class="mi">256</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="mi">256</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">512</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="mi">512</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span> <span class="mi">1024</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="mi">1024</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">()</span>
+        <span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Discriminator</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="mi">784</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">net</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="mi">1024</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(</span><span class="mf">0.2</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.3</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">512</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(</span><span class="mf">0.2</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.3</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span> <span class="mi">256</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(</span><span class="mf">0.2</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.3</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Sigmoid</span><span class="p">()</span>
+        <span class="p">)</span>
+
+<span class="n">generator</span> <span class="o">=</span> <span class="n">Generator</span><span class="p">()</span>
+<span class="n">discriminator</span> <span class="o">=</span> <span class="n">Discriminator</span><span class="p">()</span>
+
+<span class="c1"># Different optimizers for G and D</span>
+<span class="n">g_optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span>
+    <span class="n">generator</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">2e-4</span><span class="p">,</span>
+    <span class="n">betas</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">d_optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span>
+    <span class="n">discriminator</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">2e-4</span><span class="p">,</span>
+    <span class="n">betas</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># Advanced GAN loss</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AdvancedGANLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gan_loss</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">GANLoss</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wasserstein_loss</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">WassersteinLoss</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hinge_loss</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">HingeGANLoss</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fake_pred</span><span class="p">,</span> <span class="n">real_pred</span><span class="p">,</span> <span class="n">loss_type</span><span class="o">=</span><span class="s1">&#39;gan&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">loss_type</span> <span class="o">==</span> <span class="s1">&#39;gan&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gan_loss</span><span class="p">(</span><span class="n">fake_pred</span><span class="p">,</span> <span class="n">real_pred</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">loss_type</span> <span class="o">==</span> <span class="s1">&#39;wasserstein&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wasserstein_loss</span><span class="p">(</span><span class="n">fake_pred</span><span class="p">,</span> <span class="n">real_pred</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">loss_type</span> <span class="o">==</span> <span class="s1">&#39;hinge&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hinge_loss</span><span class="p">(</span><span class="n">fake_pred</span><span class="p">,</span> <span class="n">real_pred</span><span class="p">)</span>
+
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">AdvancedGANLoss</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="vae-training">
+<h3>VAE Training<a class="headerlink" href="#vae-training" title="Link to this heading"></a></h3>
+</section>
+<section id="beta-vae-for-disentangled-representations">
+<h3>Beta-VAE for Disentangled Representations<a class="headerlink" href="#beta-vae-for-disentangled-representations" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">BetaVAE</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="mi">784</span><span class="p">,</span> <span class="n">latent_dim</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="mi">400</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">400</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="n">latent_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_var</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="n">latent_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">latent_dim</span><span class="p">,</span> <span class="mi">400</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">400</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="n">input_dim</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Sigmoid</span><span class="p">()</span>
+        <span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">BetaVAE</span><span class="p">(</span><span class="n">beta</span><span class="o">=</span><span class="mf">4.0</span><span class="p">)</span>
+
+<span class="c1"># Use AdaBelief for stable VAE training</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">AdaBelief</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+    <span class="n">betas</span><span class="o">=</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">),</span>
+    <span class="n">eps</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
+    <span class="n">weight_decay</span><span class="o">=</span><span class="mf">1e-4</span>
+<span class="p">)</span>
+
+<span class="c1"># Beta-VAE loss</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">BetaVAELoss</span><span class="p">(</span><span class="n">beta</span><span class="o">=</span><span class="mf">4.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="diffusion-models">
+<h3>Diffusion Models<a class="headerlink" href="#diffusion-models" title="Link to this heading"></a></h3>
+</section>
+<section id="ddpm-training">
+<h3>DDPM Training<a class="headerlink" href="#ddpm-training" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">DiffusionModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="mi">784</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="o">=</span><span class="mi">512</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">net</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">input_dim</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">),</span>  <span class="c1"># +1 for timestep</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">input_dim</span><span class="p">)</span>
+        <span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">DiffusionModel</span><span class="p">()</span>
+
+<span class="c1"># Use AdamW for diffusion models</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">AdamW</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+    <span class="n">betas</span><span class="o">=</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">),</span>
+    <span class="n">eps</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
+    <span class="n">weight_decay</span><span class="o">=</span><span class="mf">1e-4</span>
+<span class="p">)</span>
+
+<span class="c1"># DDPM loss</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">DDPMLoss</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="metric-learning">
+<h2>Metric Learning<a class="headerlink" href="#metric-learning" title="Link to this heading"></a></h2>
+<section id="face-recognition">
+<h3>Face Recognition<a class="headerlink" href="#face-recognition" title="Link to this heading"></a></h3>
+</section>
+<section id="arcface-for-face-recognition">
+<h3>ArcFace for Face Recognition<a class="headerlink" href="#arcface-for-face-recognition" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">FaceRecognitionModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backbone</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">AdaptiveAvgPool2d</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">embedding_dim</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">FaceRecognitionModel</span><span class="p">()</span>
+
+<span class="c1"># Use Lion for memory efficiency</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Lion</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+    <span class="n">betas</span><span class="o">=</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">),</span>
+    <span class="n">weight_decay</span><span class="o">=</span><span class="mf">1e-2</span>
+<span class="p">)</span>
+
+<span class="c1"># ArcFace loss for face recognition</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">ArcFaceMetricLoss</span><span class="p">(</span>
+    <span class="n">num_classes</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">embedding_size</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span>
+    <span class="n">margin</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">scale</span><span class="o">=</span><span class="mi">64</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="contrastive-learning">
+<h3>Contrastive Learning<a class="headerlink" href="#contrastive-learning" title="Link to this heading"></a></h3>
+</section>
+<section id="simclr-style-training">
+<h3>SimCLR-style Training<a class="headerlink" href="#simclr-style-training" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">ContrastiveModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="mi">2048</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">output_dim</span><span class="o">=</span><span class="mi">128</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">projector</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">)</span>
+        <span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">ContrastiveModel</span><span class="p">()</span>
+
+<span class="c1"># Use LARS for contrastive learning</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">LARS</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+    <span class="n">momentum</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+    <span class="n">weight_decay</span><span class="o">=</span><span class="mf">1e-4</span>
+<span class="p">)</span>
+
+<span class="c1"># Contrastive loss</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">ContrastiveMetricLoss</span><span class="p">(</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">margin</span><span class="o">=</span><span class="mf">1.0</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="multi-task-learning">
+<h2>Multi-Task Learning<a class="headerlink" href="#multi-task-learning" title="Link to this heading"></a></h2>
+<section id="uncertainty-weighting">
+<h3>Uncertainty Weighting<a class="headerlink" href="#uncertainty-weighting" title="Link to this heading"></a></h3>
+</section>
+<section id="multi-task-computer-vision">
+<h3>Multi-Task Computer Vision<a class="headerlink" href="#multi-task-computer-vision" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MultiTaskVisionModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backbone</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">AdaptiveAvgPool2d</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>  <span class="c1"># Classification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regressor</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>    <span class="c1"># Regression</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">segmenter</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">21</span><span class="p">)</span>   <span class="c1"># Segmentation</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">MultiTaskVisionModel</span><span class="p">()</span>
+
+<span class="c1"># Use PCGrad for gradient surgery</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">PCGrad</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span>
+<span class="p">)</span>
+
+<span class="c1"># Multi-task loss with uncertainty weighting</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MultiTaskVisionLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty_loss</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">UncertaintyWeightingLoss</span><span class="p">(</span><span class="n">num_tasks</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cls_loss</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reg_loss</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seg_loss</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">DiceLoss</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cls_pred</span><span class="p">,</span> <span class="n">reg_pred</span><span class="p">,</span> <span class="n">seg_pred</span><span class="p">,</span> <span class="n">cls_target</span><span class="p">,</span> <span class="n">reg_target</span><span class="p">,</span> <span class="n">seg_target</span><span class="p">):</span>
+        <span class="n">cls_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cls_loss</span><span class="p">(</span><span class="n">cls_pred</span><span class="p">,</span> <span class="n">cls_target</span><span class="p">)</span>
+        <span class="n">reg_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reg_loss</span><span class="p">(</span><span class="n">reg_pred</span><span class="p">,</span> <span class="n">reg_target</span><span class="p">)</span>
+        <span class="n">seg_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seg_loss</span><span class="p">(</span><span class="n">seg_pred</span><span class="p">,</span> <span class="n">seg_target</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty_loss</span><span class="p">([</span><span class="n">cls_loss</span><span class="p">,</span> <span class="n">reg_loss</span><span class="p">,</span> <span class="n">seg_loss</span><span class="p">])</span>
+
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">MultiTaskVisionLoss</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="domain-specific-applications">
+<h2>Domain-Specific Applications<a class="headerlink" href="#domain-specific-applications" title="Link to this heading"></a></h2>
+<section id="medical-imaging">
+<h3>Medical Imaging<a class="headerlink" href="#medical-imaging" title="Link to this heading"></a></h3>
+</section>
+<section id="medical-image-analysis">
+<h3>Medical Image Analysis<a class="headerlink" href="#medical-image-analysis" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MedicalImageModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>  <span class="c1"># Grayscale medical images</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="mi">32</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># Binary classification</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">MedicalImageModel</span><span class="p">()</span>
+
+<span class="c1"># Use SAM for better generalization in medical imaging</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">SAM</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+    <span class="n">rho</span><span class="o">=</span><span class="mf">0.05</span>
+<span class="p">)</span>
+
+<span class="c1"># Medical imaging specific loss</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MedicalImagingLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">focal</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">FocalLoss</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dice</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">DiceLoss</span><span class="p">(</span><span class="n">smooth</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="n">focal_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">focal</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="n">dice_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dice</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mf">0.7</span> <span class="o">*</span> <span class="n">focal_loss</span> <span class="o">+</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">dice_loss</span>
+
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">MedicalImagingLoss</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="audio-processing">
+<h3>Audio Processing<a class="headerlink" href="#audio-processing" title="Link to this heading"></a></h3>
+</section>
+<section id="audio-classification">
+<h3>Audio Classification<a class="headerlink" href="#audio-classification" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">AudioModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">net</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="mi">256</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span>
+        <span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">AudioModel</span><span class="p">()</span>
+
+<span class="c1"># Use AdaBelief for audio processing</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">AdaBelief</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span>
+<span class="p">)</span>
+
+<span class="c1"># Audio processing loss</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">SpectralLoss</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="time-series">
+<h3>Time Series<a class="headerlink" href="#time-series" title="Link to this heading"></a></h3>
+</section>
+<section id="time-series-forecasting">
+<h3>Time Series Forecasting<a class="headerlink" href="#time-series-forecasting" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">TimeSeriesModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">output_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lstm</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LSTM</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">,</span> <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">TimeSeriesModel</span><span class="p">()</span>
+
+<span class="c1"># Use AdamW for time series</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">AdamW</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+    <span class="n">weight_decay</span><span class="o">=</span><span class="mf">1e-4</span>
+<span class="p">)</span>
+
+<span class="c1"># DTW loss for time series</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">DTWLoss</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="best-practices-by-domain">
+<h2>Best Practices by Domain<a class="headerlink" href="#best-practices-by-domain" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt><strong>Computer Vision:</strong></dt><dd><ul class="simple">
+<li><p>Use Ranger or Lookahead for vision tasks</p></li>
+<li><p>Combine multiple IoU losses for detection</p></li>
+<li><p>Use perceptual losses for super resolution</p></li>
+<li><p>Apply SAM for better generalization</p></li>
+</ul>
+</dd>
+<dt><strong>Natural Language Processing:</strong></dt><dd><ul class="simple">
+<li><p>Use LAMB for large batch training</p></li>
+<li><p>Apply label smoothing for better generalization</p></li>
+<li><p>Use NovoGrad for transformer models</p></li>
+<li><p>Consider gradient clipping for stability</p></li>
+</ul>
+</dd>
+<dt><strong>Generative Models:</strong></dt><dd><ul class="simple">
+<li><p>Use different optimizers for G and D</p></li>
+<li><p>Apply appropriate GAN loss variants</p></li>
+<li><p>Use AdaBelief for stable VAE training</p></li>
+<li><p>Consider beta scheduling for Beta-VAE</p></li>
+</ul>
+</dd>
+<dt><strong>Metric Learning:</strong></dt><dd><ul class="simple">
+<li><p>Use Lion for memory efficiency</p></li>
+<li><p>Apply ArcFace for face recognition</p></li>
+<li><p>Use LARS for contrastive learning</p></li>
+<li><p>Consider temperature scaling</p></li>
+</ul>
+</dd>
+<dt><strong>Multi-Task Learning:</strong></dt><dd><ul class="simple">
+<li><p>Use PCGrad for gradient surgery</p></li>
+<li><p>Apply uncertainty weighting</p></li>
+<li><p>Use appropriate loss combinations</p></li>
+<li><p>Monitor task-specific performance</p></li>
+</ul>
+</dd>
+<dt><strong>Domain-Specific:</strong></dt><dd><ul class="simple">
+<li><p>Use SAM for medical imaging</p></li>
+<li><p>Apply spectral losses for audio</p></li>
+<li><p>Use DTW for time series</p></li>
+<li><p>Consider domain-specific augmentations</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="advanced_usage.html" class="btn btn-neutral float-left" title="Advanced Usage Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="performance_guide.html" class="btn btn-neutral float-right" title="Performance Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Torchium Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

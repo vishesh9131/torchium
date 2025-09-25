@@ -1,0 +1,662 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Advanced Usage Guide &mdash; Torchium 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=14fc6294" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=14fc6294" />
+
+  
+    <link rel="shortcut icon" href="../_static/logo.png"/>
+    <link rel="canonical" href="https://vishesh9131.github.io/torchium/tutorials/advanced_usage.html" />
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Domain-Specific Usage Guide" href="domain_specific_usage.html" />
+    <link rel="prev" title="Quickstart Guide" href="quickstart.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Torchium
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Advanced Usage Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#meta-optimizers">Meta-Optimizers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sharpness-aware-minimization-sam">Sharpness-Aware Minimization (SAM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adaptive-sam-asam">Adaptive SAM (ASAM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gradient-surgery-methods">Gradient Surgery Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pcgrad-for-multi-task-learning">PCGrad for Multi-Task Learning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gradnorm-for-dynamic-loss-balancing">GradNorm for Dynamic Loss Balancing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#second-order-optimizers">Second-Order Optimizers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#lbfgs-for-well-conditioned-problems">LBFGS for Well-Conditioned Problems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#shampoo-for-large-models">Shampoo for Large Models</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#experimental-optimizers">Experimental Optimizers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cma-es-for-global-optimization">CMA-ES for Global Optimization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#differential-evolution">Differential Evolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#particle-swarm-optimization">Particle Swarm Optimization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-loss-combinations">Advanced Loss Combinations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#multi-task-learning-with-uncertainty-weighting">Multi-Task Learning with Uncertainty Weighting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#combined-segmentation-loss">Combined Segmentation Loss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generative-model-loss-combinations">Generative Model Loss Combinations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#custom-parameter-groups">Custom Parameter Groups</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#advanced-parameter-grouping">Advanced Parameter Grouping</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#learning-rate-scheduling">Learning Rate Scheduling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#custom-learning-rate-schedules">Custom Learning Rate Schedules</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#gradient-clipping">Gradient Clipping</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#advanced-gradient-clipping">Advanced Gradient Clipping</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#mixed-precision-training">Mixed Precision Training</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#automatic-mixed-precision">Automatic Mixed Precision</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#distributed-training">Distributed Training</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#multi-gpu-training">Multi-GPU Training</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#performance-optimization">Performance Optimization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#memory-optimization">Memory Optimization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#profiling-and-debugging">Profiling and Debugging</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#best-practices">Best Practices</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="domain_specific_usage.html">Domain-Specific Usage Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance_guide.html">Performance Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cuda_integration.html">CUDA Integration and Custom Kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cython_optimizations.html">Cython Optimizations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/optimizers.html">Optimizers API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/losses.html">Loss Functions API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/computer_vision.html">Computer Vision Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/nlp.html">Natural Language Processing Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/generative_models.html">Generative Models Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/optimization_comparison.html">Optimization Comparison Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/benchmarks.html">Benchmarks Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Torchium</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Advanced Usage Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorials/advanced_usage.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="advanced-usage-guide">
+<h1>Advanced Usage Guide<a class="headerlink" href="#advanced-usage-guide" title="Link to this heading"></a></h1>
+<p>This guide covers advanced features and usage patterns in Torchium, including meta-optimizers, experimental algorithms, and sophisticated loss combinations.</p>
+<section id="meta-optimizers">
+<h2>Meta-Optimizers<a class="headerlink" href="#meta-optimizers" title="Link to this heading"></a></h2>
+<section id="sharpness-aware-minimization-sam">
+<h3>Sharpness-Aware Minimization (SAM)<a class="headerlink" href="#sharpness-aware-minimization-sam" title="Link to this heading"></a></h3>
+<p>SAM finds flatter minima for better generalization:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torchium</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Basic SAM</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">SAM</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+    <span class="n">rho</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>  <span class="c1"># Perturbation radius</span>
+    <span class="n">adaptive</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+
+<span class="c1"># Training loop with SAM</span>
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="c1"># First forward pass</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+
+    <span class="c1"># SAM perturbation step</span>
+    <span class="n">optimizer</span><span class="o">.</span><span class="n">first_step</span><span class="p">(</span><span class="n">zero_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Second forward pass</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+
+    <span class="c1"># SAM update step</span>
+    <span class="n">optimizer</span><span class="o">.</span><span class="n">second_step</span><span class="p">(</span><span class="n">zero_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="adaptive-sam-asam">
+<h3>Adaptive SAM (ASAM)<a class="headerlink" href="#adaptive-sam-asam" title="Link to this heading"></a></h3>
+<p>ASAM adapts the perturbation radius:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">ASAM</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+    <span class="n">rho</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>  <span class="c1"># Initial perturbation radius</span>
+    <span class="n">eta</span><span class="o">=</span><span class="mf">0.01</span>  <span class="c1"># Adaptation rate</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="gradient-surgery-methods">
+<h3>Gradient Surgery Methods<a class="headerlink" href="#gradient-surgery-methods" title="Link to this heading"></a></h3>
+</section>
+<section id="pcgrad-for-multi-task-learning">
+<h3>PCGrad for Multi-Task Learning<a class="headerlink" href="#pcgrad-for-multi-task-learning" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MultiTaskModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shared</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">MultiTaskModel</span><span class="p">()</span>
+
+<span class="c1"># Use PCGrad for gradient surgery</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">PCGrad</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span>
+<span class="p">)</span>
+
+<span class="c1"># Training with multiple tasks</span>
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+
+    <span class="c1"># Forward passes for different tasks</span>
+    <span class="n">shared_features</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">shared</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">task1_output</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">task1</span><span class="p">(</span><span class="n">shared_features</span><span class="p">)</span>
+    <span class="n">task2_output</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">task2</span><span class="p">(</span><span class="n">shared_features</span><span class="p">)</span>
+
+    <span class="c1"># Compute losses</span>
+    <span class="n">loss1</span> <span class="o">=</span> <span class="n">criterion1</span><span class="p">(</span><span class="n">task1_output</span><span class="p">,</span> <span class="n">y1</span><span class="p">)</span>
+    <span class="n">loss2</span> <span class="o">=</span> <span class="n">criterion2</span><span class="p">(</span><span class="n">task2_output</span><span class="p">,</span> <span class="n">y2</span><span class="p">)</span>
+
+    <span class="c1"># PCGrad handles gradient conflicts</span>
+    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">([</span><span class="n">loss1</span><span class="p">,</span> <span class="n">loss2</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="gradnorm-for-dynamic-loss-balancing">
+<h3>GradNorm for Dynamic Loss Balancing<a class="headerlink" href="#gradnorm-for-dynamic-loss-balancing" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">GradNorm</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">1.5</span>  <span class="c1"># Restoring force hyperparameter</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="second-order-optimizers">
+<h2>Second-Order Optimizers<a class="headerlink" href="#second-order-optimizers" title="Link to this heading"></a></h2>
+<section id="lbfgs-for-well-conditioned-problems">
+<h3>LBFGS for Well-Conditioned Problems<a class="headerlink" href="#lbfgs-for-well-conditioned-problems" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># LBFGS works best with full batch or large batches</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">LBFGS</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">max_iter</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">max_eval</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">tolerance_grad</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span>
+    <span class="n">tolerance_change</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">,</span>
+    <span class="n">history_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">line_search_fn</span><span class="o">=</span><span class="s2">&quot;strong_wolfe&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Training loop for LBFGS</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">closure</span><span class="p">():</span>
+    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">loss</span>
+
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">closure</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="shampoo-for-large-models">
+<h3>Shampoo for Large Models<a class="headerlink" href="#shampoo-for-large-models" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Shampoo</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+    <span class="n">momentum</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+    <span class="n">weight_decay</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+    <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+    <span class="n">update_freq</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="experimental-optimizers">
+<h2>Experimental Optimizers<a class="headerlink" href="#experimental-optimizers" title="Link to this heading"></a></h2>
+<section id="cma-es-for-global-optimization">
+<h3>CMA-ES for Global Optimization<a class="headerlink" href="#cma-es-for-global-optimization" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># CMA-ES for non-convex optimization</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">CMAES</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">population_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">sigma</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">max_generations</span><span class="o">=</span><span class="mi">1000</span>
+<span class="p">)</span>
+
+<span class="c1"># Training loop for CMA-ES</span>
+<span class="k">for</span> <span class="n">generation</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">should_stop</span><span class="p">():</span>
+        <span class="k">break</span>
+</pre></div>
+</div>
+</section>
+<section id="differential-evolution">
+<h3>Differential Evolution<a class="headerlink" href="#differential-evolution" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">DifferentialEvolution</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">population_size</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">mutation_factor</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+    <span class="n">crossover_probability</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+    <span class="n">max_generations</span><span class="o">=</span><span class="mi">1000</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="particle-swarm-optimization">
+<h3>Particle Swarm Optimization<a class="headerlink" href="#particle-swarm-optimization" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">ParticleSwarmOptimization</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">swarm_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">inertia_weight</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+    <span class="n">cognitive_weight</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+    <span class="n">social_weight</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+    <span class="n">max_iterations</span><span class="o">=</span><span class="mi">1000</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="advanced-loss-combinations">
+<h2>Advanced Loss Combinations<a class="headerlink" href="#advanced-loss-combinations" title="Link to this heading"></a></h2>
+<section id="multi-task-learning-with-uncertainty-weighting">
+<h3>Multi-Task Learning with Uncertainty Weighting<a class="headerlink" href="#multi-task-learning-with-uncertainty-weighting" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MultiTaskLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_tasks</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty_loss</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">UncertaintyWeightingLoss</span><span class="p">(</span><span class="n">num_tasks</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task_losses</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">(),</span>
+            <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">(),</span>
+            <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">DiceLoss</span><span class="p">()</span>
+        <span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
+        <span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">targets</span><span class="p">)):</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_losses</span><span class="p">[</span><span class="n">i</span><span class="p">](</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+            <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty_loss</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span>
+
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">MultiTaskLoss</span><span class="p">(</span><span class="n">num_tasks</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="combined-segmentation-loss">
+<h3>Combined Segmentation Loss<a class="headerlink" href="#combined-segmentation-loss" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">CombinedSegmentationLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dice</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">DiceLoss</span><span class="p">(</span><span class="n">smooth</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">focal</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">FocalLoss</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tversky</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">TverskyLoss</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lovasz</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">LovaszLoss</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="n">dice_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dice</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="n">focal_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">focal</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="n">tversky_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tversky</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="n">lovasz_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lovasz</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+
+        <span class="c1"># Weighted combination</span>
+        <span class="n">total_loss</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.4</span> <span class="o">*</span> <span class="n">dice_loss</span> <span class="o">+</span>
+                     <span class="mf">0.3</span> <span class="o">*</span> <span class="n">focal_loss</span> <span class="o">+</span>
+                     <span class="mf">0.2</span> <span class="o">*</span> <span class="n">tversky_loss</span> <span class="o">+</span>
+                     <span class="mf">0.1</span> <span class="o">*</span> <span class="n">lovasz_loss</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">total_loss</span>
+
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">CombinedSegmentationLoss</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="generative-model-loss-combinations">
+<h3>Generative Model Loss Combinations<a class="headerlink" href="#generative-model-loss-combinations" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">GANLossCombination</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gan_loss</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">GANLoss</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">perceptual_loss</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">PerceptualLoss</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feature_matching_loss</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">FeatureMatchingLoss</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fake_pred</span><span class="p">,</span> <span class="n">real_pred</span><span class="p">,</span> <span class="n">fake_features</span><span class="p">,</span> <span class="n">real_features</span><span class="p">):</span>
+        <span class="n">gan_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gan_loss</span><span class="p">(</span><span class="n">fake_pred</span><span class="p">,</span> <span class="n">real_pred</span><span class="p">)</span>
+        <span class="n">perceptual_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">perceptual_loss</span><span class="p">(</span><span class="n">fake_features</span><span class="p">,</span> <span class="n">real_features</span><span class="p">)</span>
+        <span class="n">feature_matching_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_matching_loss</span><span class="p">(</span><span class="n">fake_features</span><span class="p">,</span> <span class="n">real_features</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">gan_loss</span> <span class="o">+</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">perceptual_loss</span> <span class="o">+</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">feature_matching_loss</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="custom-parameter-groups">
+<h2>Custom Parameter Groups<a class="headerlink" href="#custom-parameter-groups" title="Link to this heading"></a></h2>
+<section id="advanced-parameter-grouping">
+<h3>Advanced Parameter Grouping<a class="headerlink" href="#advanced-parameter-grouping" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Different optimizers for different parts</span>
+<span class="n">param_groups</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">backbone</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+        <span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="mf">1e-4</span><span class="p">,</span>
+        <span class="s1">&#39;weight_decay&#39;</span><span class="p">:</span> <span class="mf">1e-4</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">classifier</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+        <span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="mf">1e-3</span><span class="p">,</span>
+        <span class="s1">&#39;weight_decay&#39;</span><span class="p">:</span> <span class="mf">1e-5</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">bn</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+        <span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="mf">1e-3</span><span class="p">,</span>
+        <span class="s1">&#39;weight_decay&#39;</span><span class="p">:</span> <span class="mi">0</span>  <span class="c1"># No weight decay for batch norm</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">AdamW</span><span class="p">(</span><span class="n">param_groups</span><span class="p">)</span>
+
+<span class="c1"># Or use factory function for complex grouping</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">factory</span><span class="o">.</span><span class="n">create_optimizer_with_groups</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="s1">&#39;adamw&#39;</span><span class="p">,</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+    <span class="n">weight_decay</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+    <span class="n">no_decay</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bias&#39;</span><span class="p">,</span> <span class="s1">&#39;bn&#39;</span><span class="p">,</span> <span class="s1">&#39;ln&#39;</span><span class="p">]</span>  <span class="c1"># Exclude these from weight decay</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="learning-rate-scheduling">
+<h2>Learning Rate Scheduling<a class="headerlink" href="#learning-rate-scheduling" title="Link to this heading"></a></h2>
+<section id="custom-learning-rate-schedules">
+<h3>Custom Learning Rate Schedules<a class="headerlink" href="#custom-learning-rate-schedules" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Warmup + cosine annealing</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_lr_scheduler</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">warmup_epochs</span><span class="p">,</span> <span class="n">total_epochs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">lr_lambda</span><span class="p">(</span><span class="n">epoch</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">epoch</span> <span class="o">&lt;</span> <span class="n">warmup_epochs</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">epoch</span> <span class="o">/</span> <span class="n">warmup_epochs</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">epoch</span> <span class="o">-</span> <span class="n">warmup_epochs</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">total_epochs</span> <span class="o">-</span> <span class="n">warmup_epochs</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">LambdaLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">lr_lambda</span><span class="p">)</span>
+
+<span class="n">scheduler</span> <span class="o">=</span> <span class="n">get_lr_scheduler</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">warmup_epochs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">total_epochs</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="c1"># Training loop with scheduler</span>
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="c1"># Training step</span>
+    <span class="n">train_one_epoch</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">dataloader</span><span class="p">)</span>
+
+    <span class="c1"># Update learning rate</span>
+    <span class="n">scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="gradient-clipping">
+<h2>Gradient Clipping<a class="headerlink" href="#gradient-clipping" title="Link to this heading"></a></h2>
+<section id="advanced-gradient-clipping">
+<h3>Advanced Gradient Clipping<a class="headerlink" href="#advanced-gradient-clipping" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Gradient clipping with different methods</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">train_with_clipping</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">dataloader</span><span class="p">,</span> <span class="n">max_norm</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">dataloader</span><span class="p">:</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">input</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+
+        <span class="c1"># Gradient clipping</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">clip_grad_norm_</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">max_norm</span><span class="p">)</span>
+
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+<span class="c1"># Or use built-in clipping for some optimizers</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">AdamW</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+    <span class="n">max_grad_norm</span><span class="o">=</span><span class="mf">1.0</span>  <span class="c1"># Built-in gradient clipping</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="mixed-precision-training">
+<h2>Mixed Precision Training<a class="headerlink" href="#mixed-precision-training" title="Link to this heading"></a></h2>
+<section id="automatic-mixed-precision">
+<h3>Automatic Mixed Precision<a class="headerlink" href="#automatic-mixed-precision" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">torch.cuda.amp</span><span class="w"> </span><span class="kn">import</span> <span class="n">autocast</span><span class="p">,</span> <span class="n">GradScaler</span>
+
+<span class="n">scaler</span> <span class="o">=</span> <span class="n">GradScaler</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">dataloader</span><span class="p">:</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+
+        <span class="k">with</span> <span class="n">autocast</span><span class="p">():</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">input</span><span class="p">)</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">target</span><span class="p">)</span>
+
+        <span class="n">scaler</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">scaler</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
+        <span class="n">scaler</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="distributed-training">
+<h2>Distributed Training<a class="headerlink" href="#distributed-training" title="Link to this heading"></a></h2>
+<section id="multi-gpu-training">
+<h3>Multi-GPU Training<a class="headerlink" href="#multi-gpu-training" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch.distributed</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dist</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.nn.parallel</span><span class="w"> </span><span class="kn">import</span> <span class="n">DistributedDataParallel</span> <span class="k">as</span> <span class="n">DDP</span>
+
+<span class="c1"># Initialize distributed training</span>
+<span class="n">dist</span><span class="o">.</span><span class="n">init_process_group</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="s1">&#39;nccl&#39;</span><span class="p">)</span>
+
+<span class="c1"># Wrap model with DDP</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">DDP</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+<span class="c1"># Use LARS for distributed training</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">LARS</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+    <span class="n">momentum</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+    <span class="n">weight_decay</span><span class="o">=</span><span class="mf">1e-4</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="performance-optimization">
+<h2>Performance Optimization<a class="headerlink" href="#performance-optimization" title="Link to this heading"></a></h2>
+<section id="memory-optimization">
+<h3>Memory Optimization<a class="headerlink" href="#memory-optimization" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use Lion for memory efficiency</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Lion</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+    <span class="n">betas</span><span class="o">=</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">),</span>
+    <span class="n">weight_decay</span><span class="o">=</span><span class="mf">1e-2</span>
+<span class="p">)</span>
+
+<span class="c1"># Gradient checkpointing for large models</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.checkpoint</span><span class="w"> </span><span class="kn">import</span> <span class="n">checkpoint</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CheckpointedModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_forward</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1"># Your model forward pass</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="profiling-and-debugging">
+<h3>Profiling and Debugging<a class="headerlink" href="#profiling-and-debugging" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Profile optimizer performance</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.profiler</span>
+
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">profiler</span><span class="o">.</span><span class="n">profile</span><span class="p">(</span>
+    <span class="n">activities</span><span class="o">=</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">profiler</span><span class="o">.</span><span class="n">ProfilerActivity</span><span class="o">.</span><span class="n">CPU</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">profiler</span><span class="o">.</span><span class="n">ProfilerActivity</span><span class="o">.</span><span class="n">CUDA</span><span class="p">],</span>
+    <span class="n">schedule</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">profiler</span><span class="o">.</span><span class="n">schedule</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">warmup</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">active</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+    <span class="n">on_trace_ready</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">profiler</span><span class="o">.</span><span class="n">tensorboard_trace_handler</span><span class="p">(</span><span class="s1">&#39;./log/profiler&#39;</span><span class="p">)</span>
+<span class="p">)</span> <span class="k">as</span> <span class="n">prof</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">step</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataloader</span><span class="p">):</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">input</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="n">prof</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="best-practices">
+<h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>Choose the Right Optimizer:</strong>
+- SAM for better generalization
+- Lion for memory efficiency
+- LBFGS for well-conditioned problems
+- CMA-ES for global optimization</p></li>
+<li><p><strong>Combine Losses Wisely:</strong>
+- Use uncertainty weighting for multi-task learning
+- Combine complementary losses (e.g., Dice + Focal)
+- Balance loss weights carefully</p></li>
+<li><p><strong>Parameter Grouping:</strong>
+- Different learning rates for different layers
+- Exclude batch norm from weight decay
+- Use appropriate weight decay values</p></li>
+<li><p><strong>Learning Rate Scheduling:</strong>
+- Use warmup for stable training
+- Cosine annealing for better convergence
+- Monitor learning rate during training</p></li>
+<li><p><strong>Gradient Management:</strong>
+- Use gradient clipping for stability
+- Monitor gradient norms
+- Use gradient surgery for multi-task learning</p></li>
+<li><p><strong>Memory Management:</strong>
+- Use Lion for memory efficiency
+- Gradient checkpointing for large models
+- Mixed precision training when possible</p></li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="quickstart.html" class="btn btn-neutral float-left" title="Quickstart Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="domain_specific_usage.html" class="btn btn-neutral float-right" title="Domain-Specific Usage Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Torchium Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,419 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Torchium Documentation &mdash; Torchium 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=14fc6294" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=14fc6294" />
+
+  
+    <link rel="shortcut icon" href="_static/logo.png"/>
+    <link rel="canonical" href="https://vishesh9131.github.io/torchium/index.html" />
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Quickstart Guide" href="tutorials/quickstart.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            Torchium
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/quickstart.html">Quickstart Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/advanced_usage.html">Advanced Usage Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/domain_specific_usage.html">Domain-Specific Usage Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/performance_guide.html">Performance Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cuda_integration.html">CUDA Integration and Custom Kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cython_optimizations.html">Cython Optimizations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/optimizers.html">Optimizers API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/losses.html">Loss Functions API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/computer_vision.html">Computer Vision Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/nlp.html">Natural Language Processing Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/generative_models.html">Generative Models Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/optimization_comparison.html">Optimization Comparison Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/benchmarks.html">Benchmarks Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Torchium</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Torchium Documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="torchium-documentation">
+<h1>Torchium Documentation<a class="headerlink" href="#torchium-documentation" title="Link to this heading"></a></h1>
+<img alt="Version" src="https://img.shields.io/badge/version-0.1.0-blue.svg" />
+<img alt="License" src="https://img.shields.io/badge/license-MIT-green.svg" />
+<img alt="Python Version" src="https://img.shields.io/badge/python-3.8+-blue.svg" />
+<p><strong>Torchium</strong> is the most comprehensive PyTorch extension library, providing <strong>65+ advanced optimizers</strong> and <strong>70+ specialized loss functions</strong> for deep learning research and production. Built on top of PyTorch’s robust foundation, Torchium seamlessly integrates cutting-edge optimization algorithms and loss functions from various domains including computer vision, natural language processing, generative models, and metric learning.</p>
+<section id="key-features">
+<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>65+ Advanced Optimizers</strong>: Including second-order methods, meta-optimizers, experimental algorithms, and specialized optimizers for different domains</p></li>
+<li><p><strong>70+ Specialized Loss Functions</strong>: Covering classification, regression, computer vision, NLP, generative models, metric learning, and multi-task scenarios</p></li>
+<li><p><strong>Complete PyTorch Compatibility</strong>: All standard PyTorch optimizers and losses included for seamless integration</p></li>
+<li><p><strong>Domain-Specific Solutions</strong>: Specialized components for computer vision, NLP, generative models, and more</p></li>
+<li><p><strong>Research-Grade Quality</strong>: State-of-the-art implementations with comprehensive testing and benchmarking</p></li>
+<li><p><strong>Easy-to-Use API</strong>: Drop-in replacement for PyTorch optimizers and losses with enhanced functionality</p></li>
+<li><p><strong>Factory Functions</strong>: Dynamic optimizer/loss creation with string names and parameter groups</p></li>
+<li><p><strong>Registry System</strong>: Automatic discovery of all available components with extensible architecture</p></li>
+<li><p><strong>High Performance</strong>: Significant improvements over standard optimizers with optimized implementations</p></li>
+<li><p><strong>Modular Design</strong>: Easy to extend with new optimizers and losses following established patterns</p></li>
+</ul>
+</section>
+<section id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading"></a></h2>
+<section id="installation">
+<h3>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>torchium
+</pre></div>
+</div>
+</section>
+<section id="basic-usage">
+<h3>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torchium</span>
+
+<span class="c1"># Create model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Use advanced optimizers</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">SAM</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
+
+<span class="c1"># Use specialized loss functions</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">FocalLoss</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+
+<span class="c1"># Or use factory functions</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">create_optimizer</span><span class="p">(</span><span class="s1">&#39;sam&#39;</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">create_loss</span><span class="p">(</span><span class="s1">&#39;focal&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="factory-functions">
+<h3>Factory Functions<a class="headerlink" href="#factory-functions" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Discover available components</span>
+<span class="n">optimizers</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">get_available_optimizers</span><span class="p">()</span>  <span class="c1"># 65+ optimizers</span>
+<span class="n">losses</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">get_available_losses</span><span class="p">()</span>          <span class="c1"># 70+ loss functions</span>
+
+<span class="c1"># Create with parameter groups</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torchium</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">factory</span><span class="o">.</span><span class="n">create_optimizer_with_groups</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span> <span class="s1">&#39;adamw&#39;</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">no_decay</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bias&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="documentation-contents">
+<h2>Documentation Contents<a class="headerlink" href="#documentation-contents" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/quickstart.html">Quickstart Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/quickstart.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/quickstart.html#basic-usage">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/quickstart.html#factory-functions">Factory Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/quickstart.html#advanced-features">Advanced Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/quickstart.html#computer-vision-example">Computer Vision Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/quickstart.html#nlp-example">NLP Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/quickstart.html#generative-models-example">Generative Models Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/quickstart.html#metric-learning-example">Metric Learning Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/quickstart.html#multi-task-learning-example">Multi-Task Learning Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/quickstart.html#quick-benchmark">Quick Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/quickstart.html#next-steps">Next Steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/quickstart.html#optimizer-selection-quick-guide">Optimizer Selection Quick Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/quickstart.html#loss-function-selection-quick-guide">Loss Function Selection Quick Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/advanced_usage.html">Advanced Usage Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/advanced_usage.html#meta-optimizers">Meta-Optimizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/advanced_usage.html#second-order-optimizers">Second-Order Optimizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/advanced_usage.html#experimental-optimizers">Experimental Optimizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/advanced_usage.html#advanced-loss-combinations">Advanced Loss Combinations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/advanced_usage.html#custom-parameter-groups">Custom Parameter Groups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/advanced_usage.html#learning-rate-scheduling">Learning Rate Scheduling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/advanced_usage.html#gradient-clipping">Gradient Clipping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/advanced_usage.html#mixed-precision-training">Mixed Precision Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/advanced_usage.html#distributed-training">Distributed Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/advanced_usage.html#performance-optimization">Performance Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/advanced_usage.html#best-practices">Best Practices</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/domain_specific_usage.html">Domain-Specific Usage Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/domain_specific_usage.html#computer-vision">Computer Vision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/domain_specific_usage.html#natural-language-processing">Natural Language Processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/domain_specific_usage.html#generative-models">Generative Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/domain_specific_usage.html#metric-learning">Metric Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/domain_specific_usage.html#multi-task-learning">Multi-Task Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/domain_specific_usage.html#domain-specific-applications">Domain-Specific Applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/domain_specific_usage.html#best-practices-by-domain">Best Practices by Domain</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/performance_guide.html">Performance Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/performance_guide.html#benchmarking-methodology">Benchmarking Methodology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/performance_guide.html#performance-metrics">Performance Metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/performance_guide.html#optimization-strategies">Optimization Strategies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/performance_guide.html#domain-specific-performance">Domain-Specific Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/performance_guide.html#memory-optimization">Memory Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/performance_guide.html#distributed-training">Distributed Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/performance_guide.html#performance-monitoring">Performance Monitoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/performance_guide.html#best-practices">Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/performance_guide.html#performance-comparison-table">Performance Comparison Table</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cuda_integration.html">CUDA Integration and Custom Kernels</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/cuda_integration.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/cuda_integration.html#cuda-kernel-architecture">CUDA Kernel Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/cuda_integration.html#matrix-operations">Matrix Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/cuda_integration.html#per-sample-gradients">Per-Sample Gradients</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/cuda_integration.html#memory-management">Memory Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/cuda_integration.html#custom-c-cuda-kernels">Custom C++/CUDA Kernels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/cuda_integration.html#performance-optimization-tips">Performance Optimization Tips</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/cuda_integration.html#troubleshooting">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/cuda_integration.html#example-complete-cuda-optimized-optimizer">Example: Complete CUDA-Optimized Optimizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/cuda_integration.html#best-practices">Best Practices</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cython_optimizations.html">Cython Optimizations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/cython_optimizations.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/cython_optimizations.html#performance-benefits">Performance Benefits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/cython_optimizations.html#available-optimizations">Available Optimizations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/cython_optimizations.html#installation-and-setup">Installation and Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/cython_optimizations.html#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/cython_optimizations.html#performance-comparison">Performance Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/cython_optimizations.html#implementation-details">Implementation Details</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/cython_optimizations.html#troubleshooting">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/cython_optimizations.html#best-practices">Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/cython_optimizations.html#advanced-usage">Advanced Usage</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/optimizers.html">Optimizers API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/optimizers.html#second-order-optimizers">Second-Order Optimizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/optimizers.html#meta-optimizers">Meta-Optimizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/optimizers.html#experimental-optimizers">Experimental Optimizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/optimizers.html#adaptive-optimizers">Adaptive Optimizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/optimizers.html#momentum-based-optimizers">Momentum-Based Optimizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/optimizers.html#specialized-optimizers">Specialized Optimizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/optimizers.html#pytorch-native-optimizers">PyTorch Native Optimizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/optimizers.html#usage-examples">Usage Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/optimizers.html#performance-comparison">Performance Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/optimizers.html#optimizer-selection-guide">Optimizer Selection Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/losses.html">Loss Functions API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/losses.html#classification-losses">Classification Losses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/losses.html#regression-losses">Regression Losses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/losses.html#computer-vision-losses">Computer Vision Losses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/losses.html#natural-language-processing">Natural Language Processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/losses.html#generative-models">Generative Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/losses.html#metric-learning">Metric Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/losses.html#multi-task-learning">Multi-Task Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/losses.html#domain-specific-losses">Domain-Specific Losses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/losses.html#pytorch-native-losses">PyTorch Native Losses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/losses.html#usage-examples">Usage Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/losses.html#loss-function-comparison">Loss Function Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/losses.html#advanced-usage-patterns">Advanced Usage Patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/losses.html#domain-specific-selection-guide">Domain-Specific Selection Guide</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/computer_vision.html">Computer Vision Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/computer_vision.html#object-detection">Object Detection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/computer_vision.html#image-segmentation">Image Segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/computer_vision.html#super-resolution">Super Resolution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/computer_vision.html#style-transfer">Style Transfer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/computer_vision.html#multi-task-computer-vision">Multi-Task Computer Vision</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples/nlp.html">Natural Language Processing Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/nlp.html#transformer-training">Transformer Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/nlp.html#sequence-to-sequence-models">Sequence-to-Sequence Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/nlp.html#word-embeddings">Word Embeddings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/nlp.html#text-classification">Text Classification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/nlp.html#named-entity-recognition">Named Entity Recognition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/nlp.html#text-generation">Text Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/nlp.html#multi-task-nlp">Multi-Task NLP</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples/generative_models.html">Generative Models Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/generative_models.html#gan-training">GAN Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/generative_models.html#vae-training">VAE Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/generative_models.html#diffusion-models">Diffusion Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/generative_models.html#multi-task-generative-models">Multi-Task Generative Models</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples/optimization_comparison.html">Optimization Comparison Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/optimization_comparison.html#quick-benchmarking">Quick Benchmarking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/optimization_comparison.html#comprehensive-benchmarking">Comprehensive Benchmarking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/optimization_comparison.html#custom-benchmarking">Custom Benchmarking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/optimization_comparison.html#loss-function-comparison">Loss Function Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/optimization_comparison.html#performance-analysis">Performance Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/optimization_comparison.html#visualization">Visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/optimization_comparison.html#statistical-analysis">Statistical Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples/benchmarks.html">Benchmarks Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/benchmarks.html#quick-benchmarks">Quick Benchmarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/benchmarks.html#comprehensive-benchmarks">Comprehensive Benchmarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/benchmarks.html#domain-specific-benchmarks">Domain-Specific Benchmarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/benchmarks.html#performance-analysis">Performance Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/benchmarks.html#visualization">Visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/benchmarks.html#statistical-analysis">Statistical Analysis</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+<section id="optimizer-categories">
+<h2>Optimizer Categories<a class="headerlink" href="#optimizer-categories" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt><strong>Second-Order Methods</strong></dt><dd><p>LBFGS, Shampoo, AdaHessian, KFAC, NaturalGradient</p>
+</dd>
+<dt><strong>Meta-Optimizers</strong></dt><dd><p>SAM, GSAM, ASAM, LookSAM, WSAM, GradientCentralization, PCGrad, GradNorm</p>
+</dd>
+<dt><strong>Experimental Algorithms</strong></dt><dd><p>CMA-ES, DifferentialEvolution, ParticleSwarmOptimization, QuantumAnnealing, GeneticAlgorithm</p>
+</dd>
+<dt><strong>Adaptive Optimizers</strong></dt><dd><p>Adam variants, Adagrad variants, RMSprop variants with advanced features</p>
+</dd>
+<dt><strong>Momentum-Based Methods</strong></dt><dd><p>SGD variants, HeavyBall, and momentum-enhanced algorithms</p>
+</dd>
+<dt><strong>Specialized Optimizers</strong></dt><dd><p>Computer vision, NLP, distributed training, sparse data, and general-purpose optimizers</p>
+</dd>
+</dl>
+</section>
+<section id="loss-function-categories">
+<h2>Loss Function Categories<a class="headerlink" href="#loss-function-categories" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt><strong>Classification</strong></dt><dd><p>Cross-entropy variants, focal loss, label smoothing, class-balanced losses</p>
+</dd>
+<dt><strong>Regression</strong></dt><dd><p>MSE variants, robust losses, quantile regression, log-cosh loss</p>
+</dd>
+<dt><strong>Computer Vision</strong></dt><dd><p>Object detection (IoU losses), segmentation (Dice, Tversky), super-resolution, style transfer</p>
+</dd>
+<dt><strong>Natural Language Processing</strong></dt><dd><p>Perplexity, CRF, structured prediction, BLEU, ROUGE, METEOR, BERTScore</p>
+</dd>
+<dt><strong>Generative Models</strong></dt><dd><p>GAN losses, VAE losses, diffusion model losses, score matching</p>
+</dd>
+<dt><strong>Metric Learning</strong></dt><dd><p>Contrastive, triplet, quadruplet, angular, proxy-based losses</p>
+</dd>
+<dt><strong>Multi-Task Learning</strong></dt><dd><p>Uncertainty weighting, gradient surgery, dynamic loss balancing</p>
+</dd>
+<dt><strong>Domain-Specific</strong></dt><dd><p>Medical imaging, audio processing, time series, word embeddings</p>
+</dd>
+</dl>
+</section>
+<section id="performance-highlights">
+<h2>Performance Highlights<a class="headerlink" href="#performance-highlights" title="Link to this heading"></a></h2>
+<p>Our comprehensive benchmarks show significant improvements across various domains:</p>
+<ul class="simple">
+<li><p><strong>SAM Family</strong>: Up to 15% better generalization with flatter minima</p></li>
+<li><p><strong>Second-Order Methods</strong>: Superior convergence for well-conditioned problems</p></li>
+<li><p><strong>Specialized Optimizers</strong>: Domain-specific performance gains</p></li>
+<li><p><strong>Advanced Loss Functions</strong>: Better training stability and final performance</p></li>
+</ul>
+</section>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tutorials/quickstart.html" class="btn btn-neutral float-right" title="Quickstart Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Torchium Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

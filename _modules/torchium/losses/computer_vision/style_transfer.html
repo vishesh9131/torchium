@@ -1,0 +1,397 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>torchium.losses.computer_vision.style_transfer &mdash; Torchium 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=14fc6294" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=14fc6294" />
+
+  
+    <link rel="shortcut icon" href="../../../../_static/logo.png"/>
+    <link rel="canonical" href="https://vishesh9131.github.io/torchium/_modules/torchium/losses/computer_vision/style_transfer.html" />
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Torchium
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/quickstart.html">Quickstart Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/advanced_usage.html">Advanced Usage Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/domain_specific_usage.html">Domain-Specific Usage Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/performance_guide.html">Performance Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/cuda_integration.html">CUDA Integration and Custom Kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/cython_optimizations.html">Cython Optimizations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/optimizers.html">Optimizers API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/losses.html">Loss Functions API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/computer_vision.html">Computer Vision Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/nlp.html">Natural Language Processing Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/generative_models.html">Generative Models Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/optimization_comparison.html">Optimization Comparison Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/benchmarks.html">Benchmarks Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Torchium</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">torchium.losses.computer_vision.style_transfer</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for torchium.losses.computer_vision.style_transfer</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn.functional</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">F</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="c1"># Optional torchvision import with fallback</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">torchvision.models</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">models</span>
+    <span class="n">TORCHVISION_AVAILABLE</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">TORCHVISION_AVAILABLE</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">models</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">gram_matrix</span><span class="p">(</span><span class="n">features</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute Gram matrix for style representation&quot;&quot;&quot;</span>
+    <span class="n">batch_size</span><span class="p">,</span> <span class="n">channels</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+    <span class="n">features</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">channels</span><span class="p">,</span> <span class="n">height</span> <span class="o">*</span> <span class="n">width</span><span class="p">)</span>
+    <span class="n">gram</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">features</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">gram</span> <span class="o">/</span> <span class="p">(</span><span class="n">channels</span> <span class="o">*</span> <span class="n">height</span> <span class="o">*</span> <span class="n">width</span><span class="p">)</span>
+
+<div class="viewcode-block" id="StyleLoss">
+<a class="viewcode-back" href="../../../../api/losses.html#torchium.losses.StyleLoss">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">StyleLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Style loss using Gram matrices for neural style transfer&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="StyleLoss.__init__">
+<a class="viewcode-back" href="../../../../api/losses.html#torchium.losses.StyleLoss.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">style_layers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">style_weights</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">style_layers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">style_layers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;conv_1&#39;</span><span class="p">,</span> <span class="s1">&#39;conv_2&#39;</span><span class="p">,</span> <span class="s1">&#39;conv_3&#39;</span><span class="p">,</span> <span class="s1">&#39;conv_4&#39;</span><span class="p">,</span> <span class="s1">&#39;conv_5&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">style_weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">style_weights</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">style_layers</span> <span class="o">=</span> <span class="n">style_layers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">style_weights</span> <span class="o">=</span> <span class="n">style_weights</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">TORCHVISION_AVAILABLE</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;torchvision is required for StyleLoss. Install with: pip install torchvision&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># load pre-trained VGG19</span>
+        <span class="n">vgg</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">vgg19</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">features</span>
+        
+        <span class="c1"># freeze parameters</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">vgg</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
+        
+        <span class="c1"># create feature extractors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feature_extractors</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleDict</span><span class="p">()</span>
+        <span class="n">layer_indices</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;conv_1&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;conv_2&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;conv_3&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span> <span class="s1">&#39;conv_4&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;conv_5&#39;</span><span class="p">:</span> <span class="mi">29</span>
+        <span class="p">}</span>
+        
+        <span class="k">for</span> <span class="n">layer_name</span> <span class="ow">in</span> <span class="n">style_layers</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">layer_name</span> <span class="ow">in</span> <span class="n">layer_indices</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">feature_extractors</span><span class="p">[</span><span class="n">layer_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+                    <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="n">vgg</span><span class="o">.</span><span class="n">children</span><span class="p">())[:</span><span class="n">layer_indices</span><span class="p">[</span><span class="n">layer_name</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+                <span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">mse_loss</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="StyleLoss.forward">
+<a class="viewcode-back" href="../../../../api/losses.html#torchium.losses.StyleLoss.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generated</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">style_target</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="c1"># normalize inputs to [0,1] if needed</span>
+        <span class="k">if</span> <span class="n">generated</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="n">generated</span> <span class="o">=</span> <span class="n">generated</span> <span class="o">/</span> <span class="mf">255.0</span>
+        <span class="k">if</span> <span class="n">style_target</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="n">style_target</span> <span class="o">=</span> <span class="n">style_target</span> <span class="o">/</span> <span class="mf">255.0</span>
+        
+        <span class="c1"># normalize with ImageNet stats</span>
+        <span class="n">mean</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.485</span><span class="p">,</span> <span class="mf">0.456</span><span class="p">,</span> <span class="mf">0.406</span><span class="p">])</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">generated</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">std</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.229</span><span class="p">,</span> <span class="mf">0.224</span><span class="p">,</span> <span class="mf">0.225</span><span class="p">])</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">generated</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        
+        <span class="n">generated_norm</span> <span class="o">=</span> <span class="p">(</span><span class="n">generated</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">std</span>
+        <span class="n">style_target_norm</span> <span class="o">=</span> <span class="p">(</span><span class="n">style_target</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">std</span>
+        
+        <span class="n">total_style_loss</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">layer_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">style_layers</span><span class="p">):</span>
+            <span class="c1"># extract features</span>
+            <span class="n">generated_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_extractors</span><span class="p">[</span><span class="n">layer_name</span><span class="p">](</span><span class="n">generated_norm</span><span class="p">)</span>
+            <span class="n">style_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_extractors</span><span class="p">[</span><span class="n">layer_name</span><span class="p">](</span><span class="n">style_target_norm</span><span class="p">)</span>
+            
+            <span class="c1"># compute Gram matrices</span>
+            <span class="n">generated_gram</span> <span class="o">=</span> <span class="n">gram_matrix</span><span class="p">(</span><span class="n">generated_features</span><span class="p">)</span>
+            <span class="n">style_gram</span> <span class="o">=</span> <span class="n">gram_matrix</span><span class="p">(</span><span class="n">style_features</span><span class="p">)</span>
+            
+            <span class="c1"># compute style loss for this layer</span>
+            <span class="n">layer_style_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">generated_gram</span><span class="p">,</span> <span class="n">style_gram</span><span class="p">)</span>
+            <span class="n">total_style_loss</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">style_weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">layer_style_loss</span>
+        
+        <span class="k">return</span> <span class="n">total_style_loss</span></div>
+</div>
+
+
+<div class="viewcode-block" id="ContentLoss">
+<a class="viewcode-back" href="../../../../api/losses.html#torchium.losses.ContentLoss">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ContentLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Content loss for neural style transfer&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ContentLoss.__init__">
+<a class="viewcode-back" href="../../../../api/losses.html#torchium.losses.ContentLoss.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content_layers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">content_weights</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">content_layers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">content_layers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;conv_4&#39;</span><span class="p">]</span>  <span class="c1"># typically use conv4_2 layer</span>
+        <span class="k">if</span> <span class="n">content_weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">content_weights</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">content_layers</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">content_layers</span> <span class="o">=</span> <span class="n">content_layers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content_weights</span> <span class="o">=</span> <span class="n">content_weights</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">TORCHVISION_AVAILABLE</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;torchvision is required for ContentLoss. Install with: pip install torchvision&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># load pre-trained VGG19</span>
+        <span class="n">vgg</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">vgg19</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">features</span>
+        
+        <span class="c1"># freeze parameters</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">vgg</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
+        
+        <span class="c1"># create feature extractors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feature_extractors</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleDict</span><span class="p">()</span>
+        <span class="n">layer_indices</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;conv_1&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;conv_2&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;conv_3&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span> <span class="s1">&#39;conv_4&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;conv_5&#39;</span><span class="p">:</span> <span class="mi">29</span>
+        <span class="p">}</span>
+        
+        <span class="k">for</span> <span class="n">layer_name</span> <span class="ow">in</span> <span class="n">content_layers</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">layer_name</span> <span class="ow">in</span> <span class="n">layer_indices</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">feature_extractors</span><span class="p">[</span><span class="n">layer_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+                    <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="n">vgg</span><span class="o">.</span><span class="n">children</span><span class="p">())[:</span><span class="n">layer_indices</span><span class="p">[</span><span class="n">layer_name</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+                <span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">mse_loss</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="ContentLoss.forward">
+<a class="viewcode-back" href="../../../../api/losses.html#torchium.losses.ContentLoss.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generated</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">content_target</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="c1"># normalize inputs</span>
+        <span class="k">if</span> <span class="n">generated</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="n">generated</span> <span class="o">=</span> <span class="n">generated</span> <span class="o">/</span> <span class="mf">255.0</span>
+        <span class="k">if</span> <span class="n">content_target</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="n">content_target</span> <span class="o">=</span> <span class="n">content_target</span> <span class="o">/</span> <span class="mf">255.0</span>
+        
+        <span class="c1"># normalize with ImageNet stats</span>
+        <span class="n">mean</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.485</span><span class="p">,</span> <span class="mf">0.456</span><span class="p">,</span> <span class="mf">0.406</span><span class="p">])</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">generated</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">std</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.229</span><span class="p">,</span> <span class="mf">0.224</span><span class="p">,</span> <span class="mf">0.225</span><span class="p">])</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">generated</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        
+        <span class="n">generated_norm</span> <span class="o">=</span> <span class="p">(</span><span class="n">generated</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">std</span>
+        <span class="n">content_target_norm</span> <span class="o">=</span> <span class="p">(</span><span class="n">content_target</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">std</span>
+        
+        <span class="n">total_content_loss</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">layer_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content_layers</span><span class="p">):</span>
+            <span class="c1"># extract features</span>
+            <span class="n">generated_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_extractors</span><span class="p">[</span><span class="n">layer_name</span><span class="p">](</span><span class="n">generated_norm</span><span class="p">)</span>
+            <span class="n">content_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_extractors</span><span class="p">[</span><span class="n">layer_name</span><span class="p">](</span><span class="n">content_target_norm</span><span class="p">)</span>
+            
+            <span class="c1"># compute content loss for this layer</span>
+            <span class="n">layer_content_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">generated_features</span><span class="p">,</span> <span class="n">content_features</span><span class="p">)</span>
+            <span class="n">total_content_loss</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content_weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">layer_content_loss</span>
+        
+        <span class="k">return</span> <span class="n">total_content_loss</span></div>
+</div>
+
+
+<div class="viewcode-block" id="TotalVariationLoss">
+<a class="viewcode-back" href="../../../../api/losses.html#torchium.losses.TotalVariationLoss">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TotalVariationLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Total Variation loss for image smoothing and noise reduction&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TotalVariationLoss.__init__">
+<a class="viewcode-back" href="../../../../api/losses.html#torchium.losses.TotalVariationLoss.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weight</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">weight</span></div>
+
+    
+<div class="viewcode-block" id="TotalVariationLoss.forward">
+<a class="viewcode-back" href="../../../../api/losses.html#torchium.losses.TotalVariationLoss.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="c1"># x shape: [batch_size, channels, height, width]</span>
+        <span class="n">batch_size</span><span class="p">,</span> <span class="n">channels</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+        
+        <span class="c1"># compute differences</span>
+        <span class="n">tv_height</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">tv_width</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        
+        <span class="c1"># total variation</span>
+        <span class="n">tv_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">*</span> <span class="p">(</span><span class="n">tv_height</span> <span class="o">+</span> <span class="n">tv_width</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">batch_size</span> <span class="o">*</span> <span class="n">channels</span> <span class="o">*</span> <span class="n">height</span> <span class="o">*</span> <span class="n">width</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">tv_loss</span></div>
+</div>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">NeuralStyleLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Combined loss for neural style transfer&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content_weight</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">style_weight</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="n">tv_weight</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content_weight</span> <span class="o">=</span> <span class="n">content_weight</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">style_weight</span> <span class="o">=</span> <span class="n">style_weight</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tv_weight</span> <span class="o">=</span> <span class="n">tv_weight</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">content_loss</span> <span class="o">=</span> <span class="n">ContentLoss</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">style_loss</span> <span class="o">=</span> <span class="n">StyleLoss</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tv_loss</span> <span class="o">=</span> <span class="n">TotalVariationLoss</span><span class="p">()</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generated</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">content_target</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">style_target</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="n">content_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content_loss</span><span class="p">(</span><span class="n">generated</span><span class="p">,</span> <span class="n">content_target</span><span class="p">)</span>
+        <span class="n">style_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">style_loss</span><span class="p">(</span><span class="n">generated</span><span class="p">,</span> <span class="n">style_target</span><span class="p">)</span>
+        <span class="n">tv_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tv_loss</span><span class="p">(</span><span class="n">generated</span><span class="p">)</span>
+        
+        <span class="n">total_loss</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content_weight</span> <span class="o">*</span> <span class="n">content_loss</span> <span class="o">+</span> 
+                     <span class="bp">self</span><span class="o">.</span><span class="n">style_weight</span> <span class="o">*</span> <span class="n">style_loss</span> <span class="o">+</span> 
+                     <span class="bp">self</span><span class="o">.</span><span class="n">tv_weight</span> <span class="o">*</span> <span class="n">tv_loss</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">total_loss</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AdaINLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adaptive Instance Normalization loss for real-time style transfer&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content_weight</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">style_weight</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content_weight</span> <span class="o">=</span> <span class="n">content_weight</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">style_weight</span> <span class="o">=</span> <span class="n">style_weight</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">TORCHVISION_AVAILABLE</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;torchvision is required for AdaINLoss. Install with: pip install torchvision&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># pre-trained VGG for feature extraction</span>
+        <span class="n">vgg</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">vgg19</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">features</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">vgg</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
+        
+        <span class="c1"># encoder up to relu4_1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="n">vgg</span><span class="o">.</span><span class="n">children</span><span class="p">())[:</span><span class="mi">21</span><span class="p">])</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">mse_loss</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generated</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">style</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="c1"># normalize inputs</span>
+        <span class="k">if</span> <span class="n">generated</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="n">generated</span> <span class="o">=</span> <span class="n">generated</span> <span class="o">/</span> <span class="mf">255.0</span>
+        <span class="k">if</span> <span class="n">content</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">content</span> <span class="o">/</span> <span class="mf">255.0</span>
+        <span class="k">if</span> <span class="n">style</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="n">style</span> <span class="o">=</span> <span class="n">style</span> <span class="o">/</span> <span class="mf">255.0</span>
+        
+        <span class="c1"># ImageNet normalization</span>
+        <span class="n">mean</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.485</span><span class="p">,</span> <span class="mf">0.456</span><span class="p">,</span> <span class="mf">0.406</span><span class="p">])</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">generated</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">std</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.229</span><span class="p">,</span> <span class="mf">0.224</span><span class="p">,</span> <span class="mf">0.225</span><span class="p">])</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">generated</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        
+        <span class="n">generated_norm</span> <span class="o">=</span> <span class="p">(</span><span class="n">generated</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">std</span>
+        <span class="n">content_norm</span> <span class="o">=</span> <span class="p">(</span><span class="n">content</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">std</span>
+        <span class="n">style_norm</span> <span class="o">=</span> <span class="p">(</span><span class="n">style</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">std</span>
+        
+        <span class="c1"># extract features</span>
+        <span class="n">generated_feat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">generated_norm</span><span class="p">)</span>
+        <span class="n">content_feat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">content_norm</span><span class="p">)</span>
+        <span class="n">style_feat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">style_norm</span><span class="p">)</span>
+        
+        <span class="c1"># content loss</span>
+        <span class="n">content_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">generated_feat</span><span class="p">,</span> <span class="n">content_feat</span><span class="p">)</span>
+        
+        <span class="c1"># style loss (using mean and std matching)</span>
+        <span class="n">generated_mean</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">generated_feat</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">generated_std</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">generated_feat</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">style_mean</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">style_feat</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">style_std</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">style_feat</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        
+        <span class="n">style_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">generated_mean</span><span class="p">,</span> <span class="n">style_mean</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">generated_std</span><span class="p">,</span> <span class="n">style_std</span><span class="p">)</span>
+        
+        <span class="n">total_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content_weight</span> <span class="o">*</span> <span class="n">content_loss</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">style_weight</span> <span class="o">*</span> <span class="n">style_loss</span>
+        
+        <span class="k">return</span> <span class="n">total_loss</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Torchium Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
